@@ -1,0 +1,25 @@
+general:
+  data_path: /etc/openvpn
+  default_names:
+    COMMON_NAME: OpenVPN cert
+    ORGANIZATIONAL_UNIT_NAME: Some unit
+    ORGANIZATION_NAME: Some company
+  openvpn_binary: /usr/bin/openvpn
+  log_length: 100
+users:
+  root:
+    is_admin: true
+    password: heslo
+  test:
+    is_admin: false
+    password: test
+vpns:
+  example1:
+    enable: true
+    users:
+    - root
+    - test
+web:
+  jsonrpc: /api/jsonrpc
+  port: 8085
+  websock: /api/ws
