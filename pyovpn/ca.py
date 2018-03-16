@@ -10,47 +10,55 @@ from cryptography.x509.oid import NameOID
 ONE_DAY = datetime.timedelta(days=1)
 
 
+def normalizeConfig(config):
+    config['ca_cert_path'] = config.get('ca_cert_path', '')
+    config['ca_key_path'] = config.get('ca_key_path', '')
+    config['ca_key_password'] = config.get('ca_key_password', '')
+    config['dh_path'] = config.get('dh_path', '')
+    config['crl_path'] = config.get('crl_path', '')
+    config['sequence_path'] = config.get('sequence_path', '')
+
+
+def normalizeNames(names):
+    names['cn'] = names.get('cn', 'Test CA')
+    names['o'] = names.get('o', 'Test organization')
+    names['ou'] = names.get('ou', 'Test unit')
+
+
 class CA(object):
 
     def __init__(self, config={}):
-        CA.normalizeConfig(config)
+        normalizeConfig(config)
         self.config = config
+        self.sequence_number = self.loadSequence()
 
-        self.ca = None
-        with open(config['CACERT_PATH'], "rb") as f:
-            self.ca = x509.load_pem_x509_certificate(
+        self.cert = None
+        with open(config['ca_cert_path'], "rb") as f:
+            self.cert = x509.load_pem_x509_certificate(
                 f.read(),
                 backend=default_backend(),
             )
 
         self.key = None
-        with open(config['CAKEY_PATH'], "rb") as f:
+        with open(config['ca_key_path'], "rb") as f:
             self.key = serialization.load_pem_private_key(
                 f.read(),
-                password=None,
+                password=self.config['ca_key_password'],
                 backend=default_backend(),
             )
 
-    @staticmethod
-    def normalizeConfig(config):
-        config['CACERT_PATH'] = config.get('CACERT_PATH', '')
-        config['CAKEY_PATH'] = config.get('CAKEY_PATH', '')
-        config['CAKEY_PASSWORD'] = config.get('CAKEY_PASSWORD', '')
-        config['DH_PATH'] = config.get('DH_PATH', '')
-
-        config['SEQUENCE_PATH'] = config.get('SEQUENCE_PATH', '')
-
-    @staticmethod
-    def normalizeNames(names):
-        names['COMMON_NAME'] = names.get('COMMON_NAME', 'Test CA')
-        names['ORGANIZATION_NAME'] = names.get('ORGANIZATION_NAME', 'Test organization')
-        names['ORGANIZATIONAL_UNIT_NAME'] = names.get('ORGANIZATIONAL_UNIT_NAME', 'Test unit')
+        self.crl = None
+        with open(config['crl_path'], "rb") as f:
+            self.crl = x509.load_pem_x509_crl(
+                f.read(),
+                backend=default_backend()
+            )
 
     @staticmethod
     def create(config={}, names={}, valid_from=None, valid_to=None):
         # normalize config
-        CA.normalizeConfig(config)
-        CA.normalizeNames(names)
+        normalizeConfig(config)
+        normalizeNames(names)
 
         if valid_from is None:
             valid_from = datetime.datetime.now() - ONE_DAY
@@ -69,16 +77,18 @@ class CA(object):
         public_key = private_key.public_key()
         builder = x509.CertificateBuilder()
         name = x509.Name([
-            x509.NameAttribute(NameOID.COMMON_NAME, names['COMMON_NAME']),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, names['ORGANIZATION_NAME']),
-            x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, names['ORGANIZATIONAL_UNIT_NAME']),
+            x509.NameAttribute(NameOID.COMMON_NAME, names['cn']),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, names['o']),
+            x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, names['ou']),
         ])
 
         # fill certificate
         builder = builder.subject_name(name)
         builder = builder.issuer_name(name)
+
         builder = builder.not_valid_before(valid_from)
         builder = builder.not_valid_after(valid_to)
+
         builder = builder.serial_number(int(uuid.uuid4()))
         builder = builder.public_key(public_key)
         builder = builder.add_extension(
@@ -90,14 +100,16 @@ class CA(object):
             backend=default_backend()
         )
 
-        with open(config['CACERT_PATH'], "wb") as f:
+        # save ca cert
+        with open(config['ca_cert_path'], "wb") as f:
             f.write(
                 ca.public_bytes(
                     encoding=serialization.Encoding.PEM,
                 )
             )
 
-        with open(config['CAKEY_PATH'], "wb") as f:
+        # save ca key
+        with open(config['ca_key_path'], "wb") as f:
             encryption = serialization.NoEncryption()
             #if config['CAKEY_PASSWORD']:
                 #encryption = serialization.BestAvailableEncryption(config['CAKEY_PASSWORD'])
@@ -110,21 +122,23 @@ class CA(object):
 
         return CA(config=config)
 
+    def loadSequence(self):
+        '''
+        '''
+        with open(self.config['sequence_path'], "r") as f:
+            return int(f.read())
+
     def nextSequence(self):
         '''
         '''
-        with open(self.config['SEQUENCE_PATH'], "r") as f:
-            number = int(f.read())
+        self.sequence_number += 1
 
-        number += 1
+        with open(self.config['sequence_path'], "w") as f:
+            f.write(str(self.sequence_number))
 
-        with open(self.config['SEQUENCE_PATH'], "w") as f:
-            f.write(str(number))
+        return self.sequence_number
 
-        return number
-
-
-    def sign(self, csr, server=False, valid_from=None, valid_to=None):
+    def signCert(self, csr, server=False, valid_from=None, valid_to=None):
 
         if valid_from is None:
             valid_from = datetime.datetime.now() - ONE_DAY
@@ -132,16 +146,17 @@ class CA(object):
         if valid_to is None:
             valid_to = datetime.datetime.now() + datetime.timedelta(days=365)
 
-        if valid_to > self.ca.not_valid_after:
-            valid_to = self.ca.not_valid_after
+        if valid_to > self.cert.not_valid_after:
+            valid_to = self.cert.not_valid_after
 
-        cert = x509.CertificateBuilder()
-        cert = cert.subject_name(csr.subject)
-        cert = cert.serial_number(self.nextSequence())
-        cert = cert.not_valid_before(valid_from)
-        cert = cert.not_valid_after(valid_to)
-        cert = cert.issuer_name(self.ca.subject)
-        cert = cert.public_key(csr.public_key())
+        cert = x509.CertificateBuilder() \
+            .subject_name(csr.subject) \
+            .serial_number(self.nextSequence()) \
+            .not_valid_before(valid_from) \
+            .not_valid_after(valid_to) \
+            .issuer_name(self.cert.subject) \
+            .public_key(csr.public_key())
+
         if server:
             cert = cert.add_extension(
                 x509.BasicConstraints(ca=False, path_length=None),
@@ -161,36 +176,14 @@ class CA(object):
                 critical=False,
             )
 
-        cert = cert.sign(
+        return self.sign(cert)
+
+    def sign(self, request):
+        return request.sign(
             self.key,
             hashes.SHA256(),
             default_backend()
         )
-
-        return cert
-
-    def genCsr(self, names={}, extends=[]):
-        '''
-        '''
-        CA.normalizeNames(names)
-
-        key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
-        )
-
-        csr = x509.CertificateSigningRequestBuilder().subject_name(
-            x509.Name([
-                x509.NameAttribute(NameOID.COMMON_NAME, names['COMMON_NAME']),
-                x509.NameAttribute(NameOID.ORGANIZATION_NAME, names['ORGANIZATION_NAME']),
-                x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, names['ORGANIZATIONAL_UNIT_NAME']),
-            ])
-        ).sign(
-            key, hashes.SHA256(), default_backend()
-        )
-
-        return csr, key
 
     def genDH(self, size=2048):
         return dh.generate_parameters(
@@ -199,27 +192,84 @@ class CA(object):
         )
 
 
-    def revoke(self, crt):
+class Cert(object):
+
+    def __init__(self, cert_path, key_path, csr_path=None):
+        pass
+
+    @staticmethod
+    def genCsr(self, names={}, key=None, extends=[]):
+        '''
+        '''
+        normalizeNames(names)
+
+        if key is None:
+            key = rsa.generate_private_key(
+                public_exponent=65537,
+                key_size=2048,
+                backend=default_backend()
+            )
+
+        csr = x509.CertificateSigningRequestBuilder().subject_name(
+            x509.Name([
+                x509.NameAttribute(NameOID.COMMON_NAME, names['cn']),
+                x509.NameAttribute(NameOID.ORGANIZATION_NAME, names['o']),
+                x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, names['ou']),
+            ])
+        ).sign(
+            key, hashes.SHA256(), default_backend()
+        )
+
+        return csr, key
+
+
+class Crl(object):
+
+    def __init__(self, ca, cert_path, key_path):
+        self.ca = ca
+        self.prepare = None
+        self.path_ = path_path
+        self.cert_path = cert_path
+        self.key_path = key_path
+        self.revoked = []
+
+    @staticmethod
+    def create(self, path):
         '''
         '''
         builder = x509.CertificateRevocationListBuilder()
-        builder = builder.issuer_name(self.ca.subject)
+        builder = builder.issuer_name(self.cert.subject)
         builder = builder.last_update(datetime.datetime.today())
         builder = builder.next_update(datetime.datetime.today() + datetime.timedelta(days=1))
 
+        return builder.sign(
+            private_key=self.key,
+            algorithm=hashes.SHA256(),
+            backend=default_backend()
+        )
+
+    def addNumber(self, number):
         revoked_cert = x509.RevokedCertificateBuilder().serial_number(
-            crt.serial_number
+            number
         ).revocation_date(
             datetime.datetime.today()
         ).build(default_backend())
 
         builder = builder.add_revoked_certificate(revoked_cert)
 
-        return builder.sign(
-            private_key=self.key, algorithm=hashes.SHA256(),
-            backend=default_backend()
-        )
+    def addCert(self, cert):
+        revoked_cert = x509.RevokedCertificateBuilder().serial_number(
+            cert.serial_number
+        ).revocation_date(
+            datetime.datetime.today()
+        ).build(default_backend())
 
+        builder = builder.add_revoked_certificate(revoked_cert)
 
+    def check(self, sequence, active=[]):
+        pass
+        return crl
 
+    def save(self):
+        pass
 

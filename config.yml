@@ -1,5 +1,5 @@
+data_path: /home/sauron/Projects/os/pyovpn/test
 general:
-  data_path: /etc/openvpn
   default_names:
     COMMON_NAME: OpenVPN cert
     ORGANIZATIONAL_UNIT_NAME: Some unit
@@ -9,10 +9,13 @@ general:
 users:
   root:
     is_admin: true
+    is_anonymouse: false
     password: heslo
   test:
     is_admin: false
+    is_anonymouse: false
     password: test
+
 vpns:
   example1:
     enable: true
