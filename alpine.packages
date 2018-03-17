@@ -1,0 +1,21 @@
+apk update
+apk upgrade
+apk add openssh
+apk add openvpn python3
+apk add py3-setuptools
+apk add py3-cryptography
+apk add git
+apk add rsync
+apk add vim
+apk add htop
+apk add py3-yaml
+apk add make gcc
+apk add python3-dev
+apk add linux-headers
+apk add musl-dev
+apk add libffi-dev
+apk add libopenssl-dev
+apk add openssl-dev
+apk add glibc-dev
+apk add libc-dev
+apk add glibc-dev

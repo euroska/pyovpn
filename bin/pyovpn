@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+import sys
+import logging
+import argparse
+from pyovpn.manager import Manager
+from pyovpn.config import Config
+
+logger = logging.getLogger('asyncio')
+logger.setLevel(logging.WARNING)
+
+parser = argparse.ArgumentParser(
+    description='PyOVP',
+    epilog='Send me report ;)'
+)
+parser.add_argument('-c', '--config', default='/etc/pyovpn/pyovpn.yaml', help='Config file destination')
+parser.add_argument('-g', '--generate', action='store_true', help='Generate example configuration')
+parser.add_argument('-n', '--nostart', action='store_true', help='Config file destination')
+
+args = parser.parse_args()
+
+if args.generate:
+    config = Config.generate()
+    print(config.__class__.__name__)
+    print(config)
+    sys.exit(0)
+
+if args.nostart:
+    sys.exit(0)
+
+config = Config.load(args.config)
+manager = Manager(config)
+manager.config.generateStructure()
+manager.start()

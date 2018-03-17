@@ -1,0 +1,31 @@
+{
+	"variables": [],
+	"info": {
+		"name": "PyOvpn",
+		"_postman_id": "f6d2ff6d-d7df-f740-32da-2c2b4b202f3b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "pyovpn.login",
+			"request": {
+				"url": "http://localhost:8080/api/jsonrpc",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"message\": \"pyovpn.login\",\n\t\"body\": {\n\t\t\"username\": \"root\",\n\t\t\"password\": \"heslo\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
