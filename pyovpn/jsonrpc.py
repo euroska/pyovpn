@@ -7,11 +7,19 @@ class JsonRPC(object):
         self.manager = manager
 
     async def __call__(self, request):
+        user = self.manager.ANONYMOUSE
         data = await request.json()
 
         message = data.get('message', '')
         body = data.get('body')
 
+        token = await self.manager.checkToken(
+            request.headers.get('X-Token', '_')
+        )
+
+        if token in self.manager.config['users']:
+            user = self.manager.config['users'][token]
+
         return json_response(
-            await self.manager.worker(message, body, self.manager.ANONYMOUSE)
+            await self.manager.worker(message, body, user)
         )

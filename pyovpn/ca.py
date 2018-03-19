@@ -25,34 +25,65 @@ def normalizeNames(names):
     names['ou'] = names.get('ou', 'Test unit')
 
 
+def getKey(path, password=None):
+    if os.path.exists(path):
+        with open(path, 'rb') as f:
+            return serialization.load_pem_private_key(
+                f.read(),
+                password=password,
+                backend=default_backend(),
+            )
+
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+        backend=default_backend()
+    )
+
+    with open(path, 'wb') as f:
+        encryption = serialization.NoEncryption()
+        if password:
+            encryption = serialization.BestAvailableEncryption(password)
+
+            f.write(private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=encryption,
+            ))
+
+    return private_key
+
+def genDH(path, size=2048, public_exponent=65537):
+    if not os.path.exists(path):
+        parametres = dh.generate_parameters(
+            generator=2, key_size=2048,
+            backend=default_backend()
+        )
+
+    with open(path, 'wb') as f:
+        f.write(parametres.parameter_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.ParameterFormat.PKCS3
+        ))
+    return True
+
+
 class CA(object):
 
     def __init__(self, config={}):
         normalizeConfig(config)
+        genDH(config['dh_path'])
+
         self.config = config
         self.sequence_number = self.loadSequence()
 
-        self.cert = None
-        with open(config['ca_cert_path'], "rb") as f:
-            self.cert = x509.load_pem_x509_certificate(
-                f.read(),
-                backend=default_backend(),
-            )
+        self.key = getKey(
+            config['ca_key_path'],
+            self.config['ca_key_password']
+        )
+        self.cert = Cert(config['ca_cert_path'], key=self.key)
+        self.crl = Crl(self, config['crl_path'])
 
-        self.key = None
-        with open(config['ca_key_path'], "rb") as f:
-            self.key = serialization.load_pem_private_key(
-                f.read(),
-                password=self.config['ca_key_password'],
-                backend=default_backend(),
-            )
-
-        self.crl = None
-        with open(config['crl_path'], "rb") as f:
-            self.crl = x509.load_pem_x509_crl(
-                f.read(),
-                backend=default_backend()
-            )
 
     @staticmethod
     def create(config={}, names={}, valid_from=None, valid_to=None):
@@ -67,11 +98,7 @@ class CA(object):
             valid_to = valid_from + datetime.timedelta(days=3650)
 
         # first create private key
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
-        )
+        private_key = getKey(config['ca_key_path'])
 
         # get public key
         public_key = private_key.public_key()
@@ -108,25 +135,15 @@ class CA(object):
                 )
             )
 
-        # save ca key
-        with open(config['ca_key_path'], "wb") as f:
-            encryption = serialization.NoEncryption()
-            #if config['CAKEY_PASSWORD']:
-                #encryption = serialization.BestAvailableEncryption(config['CAKEY_PASSWORD'])
-
-            f.write(private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.TraditionalOpenSSL,
-                encryption_algorithm=encryption,
-            ))
-
         return CA(config=config)
 
     def loadSequence(self):
         '''
         '''
-        with open(self.config['sequence_path'], "r") as f:
-            return int(f.read())
+        if os.path.exists(self.config['sequence_path']):
+            with open(self.config['sequence_path'], "r") as f:
+                return int(f.read())
+        return 1
 
     def nextSequence(self):
         '''
@@ -185,17 +202,28 @@ class CA(object):
             default_backend()
         )
 
-    def genDH(self, size=2048):
-        return dh.generate_parameters(
-            generator=2, key_size=2048,
-            backend=default_backend()
-        )
 
 
 class Cert(object):
 
-    def __init__(self, cert_path, key_path, csr_path=None):
-        pass
+    def __init__(self, cert_path, key, csr=None):
+        self.path = cert_path
+        with open(cert_path, 'rb') as f:
+            self.cert = x509.load_pem_x509_certificate(
+                f.read(),
+                default_backend()
+            )
+
+        self.key = key
+        self.csr = csr
+
+    def save(self):
+        with open(self.path, 'wb') as f:
+            f.write(
+                self.cert.public_bytes(
+                    encoding=serialization.Encoding.PEM
+                )
+            )
 
     @staticmethod
     def genCsr(self, names={}, key=None, extends=[]):
@@ -225,13 +253,15 @@ class Cert(object):
 
 class Crl(object):
 
-    def __init__(self, ca, cert_path, key_path):
+    def __init__(self, ca, crl_path):
         self.ca = ca
-        self.prepare = None
-        self.path_ = path_path
-        self.cert_path = cert_path
-        self.key_path = key_path
-        self.revoked = []
+        self.crl_path = crl_path
+
+        with open(crl_path, 'wb') as f:
+            self.crl = x509.load_pem_x509_crl(
+                f.read(), default_backend()
+            )
+
 
     @staticmethod
     def create(self, path):
@@ -266,9 +296,8 @@ class Crl(object):
 
         builder = builder.add_revoked_certificate(revoked_cert)
 
-    def check(self, sequence, active=[]):
-        pass
-        return crl
+    def normalize(self, active=[]):
+        return active
 
     def save(self):
         pass

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import os
 import logging
 import asyncio
+import hashlib
+import datetime
 from aiohttp.web import Application
 
 from .config import Config
@@ -26,6 +29,7 @@ class Manager(object):
         self.worker = Worker(self)
         self.jsonrpc = JsonRPC(self)
         self.websock = WebsocketProtocol(self)
+        self.tokens = {}
 
         self.app = Application()
         jsonrpc = self.config._data.get('web', {}).get('jsonrpc', '/api/jsonrpc')
@@ -42,15 +46,55 @@ class Manager(object):
         return False
 
     async def getToken(self, username):
-        return '123'
+        path = ''
+        while True:
+            hash =  hashlib.sha256(
+                (username + datetime.datetime.now().isoformat()).encode('utf-8')
+            )
+            path = os.path.join(self.config['data_path'], 'tokens', hash.hexdigest())
+            if not os.path.exists(path):
+                break
+
+        with open(path, 'w') as f:
+            f.write(username)
+
+        return hash.hexdigest()
 
     async def checkToken(self, token):
+
+        if token in self.tokens:
+            return self.tokens[token]
+
+        path = os.path.join(self.config['data_path'], 'tokens', token)
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                return f.read()
+
         return False
 
     async def delToken(self, token):
+        path = os.path.join(self.config['data_path'], 'tokens', token)
+
+        if os.path.exists(path):
+            os.unlink(path)
+
+        if token in self.tokens:
+            del self.tokens[token]
+
         return True
 
-    async def clearTokens(self):
+    async def clearTokens(self, delta):
+        arbitrary = datetime.datetime.now() - delta
+        for root, dirs, tokens in os.walk(os.path.join(
+            self.config['data_path'], 'tokens'
+        )):
+            for token in tokens:
+                path = os.path.join(root, f)
+                if arbitrary > os.path.getctime(path):
+                    os.unlink(path)
+                    if token in self.tokens:
+                        del self.tokens[token]
+
         return True
 
     async def run(self):

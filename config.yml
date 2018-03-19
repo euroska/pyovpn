@@ -1,4 +1,4 @@
-data_path: /home/sauron/Projects/os/pyovpn/test
+data_path: /home/euro/Projects/open-source/pyovpn/test
 general:
   default_names:
     COMMON_NAME: OpenVPN cert
@@ -16,12 +16,7 @@ users:
     is_anonymouse: false
     password: test
 
-vpns:
-  example1:
-    enable: true
-    users:
-    - root
-    - test
+vpns: {}
 web:
   jsonrpc: /api/jsonrpc
   port: 8085

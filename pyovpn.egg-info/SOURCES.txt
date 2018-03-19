@@ -6,7 +6,7 @@ pyovpn/jsonrpc.py
 pyovpn/manager.py
 pyovpn/utils.py
 pyovpn/vpn.py
-pyovpn/websock.py
+pyovpn/websocket.py
 pyovpn/worker.py
 pyovpn.egg-info/PKG-INFO
 pyovpn.egg-info/SOURCES.txt
