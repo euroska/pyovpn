@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "PyOvpn",
-		"_postman_id": "f6d2ff6d-d7df-f740-32da-2c2b4b202f3b",
+		"_postman_id": "4601db12-e9b1-b18f-4d08-01ec3aaffc11",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -15,15 +15,62 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"message\": \"pyovpn.login\",\n  \"body\": {\n    \"username\": \"root\",\n    \"password\": \"heslo\"\n  }\n}"
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "pyovpn.logout",
+			"request": {
+				"url": "http://localhost:8080/api/jsonrpc",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Token",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"message\": \"pyovpn.logout\",\n  \"body\": \"7517c6a51aaa39303ce3e35ffdade603538b6cc7d9d23ddf15372e0335cedace\"\n}"
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "pyovpn.vpn.list",
+			"request": {
+				"url": "http://localhost:8080/api/jsonrpc",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Token",
+						"value": "{{TOKEN}} ",
 						"description": ""
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"message\": \"pyovpn.login\",\n\t\"body\": {\n\t\t\"username\": \"root\",\n\t\t\"password\": \"heslo\"\n\t}\n}"
+					"raw": "{\n  \"message\": \"pyovpn.vpn.list\",\n  \"body\": {}\n}"
 				},
-				"description": ""
+				"description": null
 			},
 			"response": []
 		}
