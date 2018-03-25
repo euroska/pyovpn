@@ -1,22 +1,21 @@
-data_path: /home/euro/Projects/open-source/pyovpn/test
+data_path: /home/sauron/Projects/os/pyovpn/test
+debug: true
 general:
   default_names:
     COMMON_NAME: OpenVPN cert
     ORGANIZATIONAL_UNIT_NAME: Some unit
     ORGANIZATION_NAME: Some company
-  openvpn_binary: /usr/bin/openvpn
   log_length: 100
+  openvpn_binary: /usr/bin/openvpn
 users:
   root:
     is_admin: true
     is_anonymouse: false
-    password: heslo
+    password: 4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2
+    username: root
+vpns:
   test:
-    is_admin: false
-    is_anonymouse: false
-    password: test
-
-vpns: {}
+    enabled: false
 web:
   jsonrpc: /api/jsonrpc
   port: 8085

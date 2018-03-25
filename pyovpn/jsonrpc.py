@@ -13,13 +13,12 @@ class JsonRPC(object):
         message = data.get('message', '')
         body = data.get('body')
 
-        token = await self.manager.checkToken(
+        username = await self.manager.checkToken(
             request.headers.get('X-Token', '_')
         )
-
-        if token in self.manager.config['users']:
-            user = self.manager.config['users'][token]
+        if username in self.manager.config['users']:
+            user = self.manager.config['users'][username]
 
         return json_response(
-            await self.manager.worker(message, body, user)
+            await self.manager.api(message, body, user)
         )

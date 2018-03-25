@@ -9,7 +9,7 @@ from aiohttp.web import Application
 from .config import Config
 from .jsonrpc import JsonRPC
 from .websocket import WebsocketProtocol
-from .worker import Worker
+from .api import Api
 from .vpn import VPN
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Manager(object):
     ANONYMOUSE = {
+        'username': 'Anonymouse',
         'is_admin': True,
         'is_anonymouse': False,
         'password': '',
@@ -26,7 +27,7 @@ class Manager(object):
         self.loop = asyncio.get_event_loop()
         self.config = config
         self.vpns = {}
-        self.worker = Worker(self)
+        self.api = Api(self)
         self.jsonrpc = JsonRPC(self)
         self.websock = WebsocketProtocol(self)
         self.tokens = {}
@@ -38,11 +39,16 @@ class Manager(object):
         websock = jsonrpc = self.config._data.get('web', {}).get('websock', '/api/ws')
         self.app.router.add_get(websock, self.websock)
 
+    def hashPassword(self, password):
+        return hashlib.sha256(password.encode('utf8')).hexdigest()
+
+    def checkPassword(self, username, password):
+        user = self.config['users'][username]
+        return self.hashPassword(password) == user['password']
+
     async def login(self, username, password):
         if username in self.config['users']:
-            data = self.config['users'][username]
-            if password == data.get('password'):
-                return True
+            return self.checkPassword(username, password)
         return False
 
     async def getToken(self, username):
@@ -58,7 +64,9 @@ class Manager(object):
         with open(path, 'w') as f:
             f.write(username)
 
-        return hash.hexdigest()
+        token = hash.hexdigest()
+        self.tokens[token] = username
+        return token
 
     async def checkToken(self, token):
 
@@ -68,7 +76,9 @@ class Manager(object):
         path = os.path.join(self.config['data_path'], 'tokens', token)
         if os.path.exists(path):
             with open(path, 'r') as f:
-                return f.read()
+                username = f.read()
+                self.tokens[token] = username
+                return username
 
         return False
 
@@ -126,4 +136,7 @@ class Manager(object):
 
         for vpn in self.vpns.values():
             vpn.stop()
+
+    def notify(self, message):
+        print(message, flush=True)
 
