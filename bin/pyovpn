@@ -20,7 +20,6 @@ args = parser.parse_args()
 
 if args.generate:
     config = Config.generate()
-    print(config.__class__.__name__)
     print(config)
     sys.exit(0)
 

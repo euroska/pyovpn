@@ -1,6 +1,7 @@
 import uuid
 import datetime
 import os
+from pytz import reference
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -9,7 +10,8 @@ from cryptography.x509.oid import NameOID
 
 ONE_DAY = datetime.timedelta(days=1)
 
-#__all__ = []
+
+tz = reference.LocalTimezone()
 
 
 def normalizeConfig(config):
@@ -327,8 +329,8 @@ class Crl(object):
     def build(ca, path):
         builder = x509.CertificateRevocationListBuilder()
         builder = builder.issuer_name(ca.cert.subject)
-        builder = builder.last_update(datetime.datetime.today())
-        builder = builder.next_update(datetime.datetime.today() + datetime.timedelta(days=1))
+        builder = builder.last_update(datetime.datetime.now(tz=tz))
+        builder = builder.next_update(datetime.datetime.now(tz=tz) + datetime.timedelta(days=1))
         return builder
 
     @staticmethod
@@ -367,10 +369,13 @@ class Crl(object):
             self.revoked_numbers.append(revoked.serial_number)
 
     def revoke(self, cert, save=True):
+        '''
+        Revoke certificate
+        '''
         revoked_cert = x509.RevokedCertificateBuilder().serial_number(
             cert.serial_number
         ).revocation_date(
-            datetime.datetime.today()
+            datetime.datetime.now(tz=tz)
         ).build(default_backend())
 
         self.builder = self.builder.add_revoked_certificate(revoked_cert)
@@ -379,13 +384,17 @@ class Crl(object):
             self.save()
 
     def normalize(self, active=[]):
+        '''
+        Mark all sequence not in active as Revoked
+        return all active sequence numbers
+        '''
         for i in range(1, self.ca.sequence_number):
             if i not in active and i not in self.revoked_numbers:
                 self.revoked_numbers.append(i)
                 revoked_cert = x509.RevokedCertificateBuilder().serial_number(
                     i
                 ).revocation_date(
-                    datetime.datetime.today()
+                    datetime.datetime.now(tz=tz)
                 ).build(default_backend())
                 self.builder = self.builder.add_revoked_certificate(revoked_cert)
 
@@ -393,6 +402,9 @@ class Crl(object):
         return [i for i in active if i not in self.revoked_numbers]
 
     def save(self):
+        '''
+        Save DH file
+        '''
         savePem(self.builder.sign(
             private_key=self.ca.key,
             algorithm=hashes.SHA256(),

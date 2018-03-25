@@ -10,6 +10,8 @@ setup(
     url='https://github.com/euroska/pyovpn',
     packages=['pyovpn'],
     install_requires=[
+        #todo add dependencies
+        'aiohttp',
     ],
     scripts=[
         'bin/pyovpn'

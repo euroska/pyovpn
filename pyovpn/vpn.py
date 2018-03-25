@@ -199,14 +199,14 @@ class VPN(object):
         s['cn'] = cn
         csr, key = Cert.genCsr(subject=s)
         cert = self.ca.signCert(csr, server=False)
-
+        cert_path = os.path.join(self.config['certs'], '%s.pem' % cn)
         saveKeyPem(key, os.path.join(self.config['keys'], '%s.key' % cn))
         savePem(csr, os.path.join(self.config['csrs'], '%s.csr' % cn))
-        savePem(cert, os.path.join(self.config['certs'], '%s.pem' % cn))
+        savePem(cert, cert_path)
 
         self.keys[cn] = key
         self.csrs[cn] = csr
-        self.certs[cn] = cert
+        self.certs[cn] = Cert(cert_path, key, csr=csr)
 
     def cnRevoke(self, cn, save=True):
         '''
@@ -353,6 +353,7 @@ class VPN(object):
         )
 
     def configSet(self, config=None):
+
         if config is None:
             config = self.configGet(regenerate=True)
 
@@ -421,7 +422,8 @@ class VPN(object):
         Read stdout and store log
         '''
         self.process = await asyncio.create_subprocess_exec(
-            '/usr/bin/openvpn', self.config['server_config_path'],
+            self.manager.config['general'].get('openvpn_binary', 'openvpn'),
+            self.config['server_config_path'],
             stdout=asyncio.subprocess.PIPE
         )
 

@@ -232,7 +232,7 @@ class VpnApi(object):
             raise VpnDoesNotExist()
 
         vpn = self.manager.vpns[body['name']]
-        if vpn.hasUser(body['username']):
+        if not vpn.hasUser(body['username']):
             raise VpnDoesNotExist()
 
         return {

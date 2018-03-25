@@ -1,78 +1,961 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "a944ce03-cd67-38a9-5b37-5a0b1acdba05",
 		"name": "PyOvpn",
-		"_postman_id": "4601db12-e9b1-b18f-4d08-01ec3aaffc11",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "pyovpn.login",
-			"request": {
-				"url": "http://localhost:8080/api/jsonrpc",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"message\": \"pyovpn.login\",\n  \"body\": {\n    \"username\": \"root\",\n    \"password\": \"heslo\"\n  }\n}"
+			"name": "Common",
+			"description": "",
+			"item": [
+				{
+					"name": "pyovpn.messages",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.messages\",\n  \"body\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
 				},
-				"description": null
-			},
-			"response": []
+				{
+					"name": "pyovpn.unknown",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.unknown\",\n  \"body\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.error\",\n  \"body\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "pyovpn.logout",
-			"request": {
-				"url": "http://localhost:8080/api/jsonrpc",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
+			"name": "Auth",
+			"description": "",
+			"item": [
+				{
+					"name": "pyovpn.login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.login\",\n  \"body\": {\n    \"username\": \"root\",\n    \"password\": \"root\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
 					},
-					{
-						"key": "X-Token",
-						"value": "",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"message\": \"pyovpn.logout\",\n  \"body\": \"7517c6a51aaa39303ce3e35ffdade603538b6cc7d9d23ddf15372e0335cedace\"\n}"
+					"response": []
 				},
-				"description": null
-			},
-			"response": []
+				{
+					"name": "pyovpn.logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "X-Token",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.logout\",\n  \"body\": \"8959d4908a5a81ab9fd18b13369ec45a33d134f31516454b71e4b7c153512a12\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.tokens",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.tokens\",\n  \"body\": []\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "pyovpn.vpn.list",
-			"request": {
-				"url": "http://localhost:8080/api/jsonrpc",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
+			"name": "Templates",
+			"description": "",
+			"item": [
+				{
+					"name": "template.server.list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.server.list\",\n  \"body\": []\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
 					},
-					{
-						"key": "X-Token",
-						"value": "{{TOKEN}} ",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"message\": \"pyovpn.vpn.list\",\n  \"body\": {}\n}"
+					"response": []
 				},
-				"description": null
-			},
-			"response": []
+				{
+					"name": "template.server.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.server.set\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"template\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template.server.del",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.server.del\",\n  \"body\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template.client.list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.client.list\",\n  \"body\": []\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template.client.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.client.set\",\n  \"body\": {\n  \"name\": \"test\",\n  \"template\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template.client.del",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.template.client.del\",\n  \"body\": \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"description": "",
+			"item": [
+				{
+					"name": "pyovpn.user.list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.user.list\",\n  \"body\": null\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.user.add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.user.add\",\n  \"body\": {\n  \t\"username\": \"test\",\n  \t\"password\": \"test\",\n  \t\"is_admin\": false\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.user.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.user.set\",\n  \"body\": {\n  \t\"username\": \"test1\",\n  \t\"is_admin\": false,\n  \t\"is_anonymouse\": false\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.user.password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.user.password\",\n  \"body\": {\n  \t\"username\": \"test1\",\n  \t\"password\": \"test2\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.user.del",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.user.del\",\n  \"body\":  \"test\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VPN",
+			"description": "",
+			"item": [
+				{
+					"name": "User",
+					"description": "",
+					"item": [
+						{
+							"name": "pyovpn.vpn.user.add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.add\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"username\": \"root\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pyovpn.vpn.user.renew",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.renew\",\n  \"body\": {\n  \t\"name\": \"test2\",\n  \t\"username\": \"server\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pyovpn.vpn.user.revoke",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.revoke\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"username\": \"test\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pyovpn.vpn.user.template.set",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.template.set\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"template\": \"test {{ username }}\"\n  \t\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pyovpn.vpn.user.template",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.template\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pyovpn.vpn.user.config",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Token",
+										"value": "{{TOKEN}} "
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"message\": \"pyovpn.vpn.user.config\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"username\": \"root\"\n  }\n}"
+								},
+								"url": {
+									"raw": "{{SERVER_URL}}",
+									"host": [
+										"{{SERVER_URL}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "pyovpn.vpn.list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.list\",\n  \"body\": {}\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.add\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"subject\": {\n  \t\t\"o\": \"test\",\n  \t\t\"ou\": \"It\"\n  \t}\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.template.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.template.set\",\n  \"body\": {\n  \t\"name\": \"test\",\n  \t\"template\": \"\\nlocal 0.0.0.0\\nport 2480\\nproto tcp\\ndev tap\\n<ca>\\n{{ ca }}\\n</ca>\\n\\n<cert>\\n{{ cert }}\\n</cert>\\n\\n<key>\\n{{ key }}\\n</key>\\n\\ncert /etc/openvpn/cert.pem\\nkey  /etc/openvpn/key.pem\\ndh /etc/openvpn/dh1024.pem\\n\\nserver 10.2.2.0 255.255.255.0\\nifconfig-pool-persist ipp.txt\\n# push \\\"route 172.16.0.0 255.255.255.0\\\"\\n# push \\\"dhcp-option DNS 10.0.0.1\\\"\\nkeepalive 10 120\\ncomp-lzo\\nuser nobody\\ngroup nobody\\npersist-key\\npersist-tun\\nclient-to-client \\nstatus /var/log/openvpn-status.log\\nlog-append  /var/log/openvpn.log\\nverb 3\\n\",\n  \t\"regenerate\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.template\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.config.set",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.config.set\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.config",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.config\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.start",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.start\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.stop",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.stop\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.kill",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.kill\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.log",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.log\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pyovpn.vpn.log.diff",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Token",
+								"value": "{{TOKEN}} "
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"pyovpn.vpn.log.diff\",\n  \"body\": {\n  \t\"name\": \"test\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{SERVER_URL}}",
+							"host": [
+								"{{SERVER_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

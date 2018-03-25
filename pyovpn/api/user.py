@@ -51,7 +51,7 @@ class UserApi(object):
                 'username': username,
                 'is_admin': attr.get('is_admin', False),
                 'is_anonymouse': attr.get('is_anonymouse', False),
-                'vpns': [vpn.name for vpn in self.manager.vpns if vpn.hasUser(username)],
+                'vpns': [vpn.name for vpn in self.manager.vpns.values() if vpn.hasUser(username)],
             } for username, attr in self.manager.config['users'].items()
         ]
         return users
@@ -118,7 +118,7 @@ class UserApi(object):
             'username': user['username'],
             'is_admin': user['is_admin'],
             'is_anonymouse': user['is_anonymouse'],
-            'vpns': [vpn.name for vpn in self.manager.vpns if vpn.hasUser(username)]
+            'vpns': [vpn.name for vpn in self.manager.vpns.values() if vpn.hasUser(username)]
         }
 
     @isAdmin
@@ -140,7 +140,7 @@ class UserApi(object):
             'username': user['username'],
             'is_admin': user['is_admin'],
             'is_anonymouse': user['is_anonymouse'],
-            'vpns': [vpn.name for vpn in self.manager.vpns if vpn.hasUser(username)]
+            'vpns': [vpn.name for vpn in self.manager.vpns.values() if vpn.hasUser(username)]
         }
 
     @isAutorized
