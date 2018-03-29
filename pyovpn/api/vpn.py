@@ -2,6 +2,7 @@ from .decorators import isAdmin, isAutorized, api
 from .errors import ApiError
 from ..vpn import VPN
 
+
 class VpnDoesNotExist(ApiError):
 
     def __init__(self):

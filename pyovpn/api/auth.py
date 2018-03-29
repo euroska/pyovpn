@@ -55,6 +55,11 @@ class AuthApi(object):
         return await self.manager.delToken(body)
 
     @isAutorized
-    @api('pyovpn.tokens')
+    @api('pyovpn.token')
+    async def token(self, body, user):
+        return user
+
+    @isAutorized
+    @api('pyovpn.token.list')
     async def tokens(self, body, user):
         return [key for key, value in self.manager.tokens.items() if value == user['username']]

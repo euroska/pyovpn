@@ -1,0 +1,27 @@
+<div class="row">
+    <!-- Sidebar -->
+    <nav class="col-2" id="nav">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <a ui-sref="pyovpn.dashboard">Dashboard</a>
+            </li>
+
+            <li class="sidebar-brand">
+                <a ui-sref="pyovpn.user">Users</a>
+            </li>
+
+            <li class="sidebar-brand">
+                <a ui-sref="pyovpn.vpn">VPNs</a>
+            </li>
+
+            <li class="sidebar-brand">
+                <a ui-sref="pyovpn.template">Templates</a>
+            </li>
+        </ul>
+    </nav>
+    <content class="col-10" id="main">
+        {{ $ctrl }}
+        <div ui-view="main">
+        </div>
+    </div>
+</div>

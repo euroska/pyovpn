@@ -1,0 +1,14 @@
+<form class="form-signin" style="width: 100%; max-width: 330px; padding: 15px; margin: 0 auto;" ng-submit="$ctrl.submit()">
+    <h1 class="h3 mb-3 font-weight-normal">{{ $ctrl.t }}</h1>
+
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="username" id="inputUsername" class="form-control" ng-model="$ctrl.username" placeholder="Username" required autofocus>
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" ng-model="$ctrl.password" placeholder="Password" required>
+    <br />
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+</form>
+
+<a ui-sref="pyovpn.vpn">VPN</a>
+<a ui-sref="pyovpn.user">User</a>
