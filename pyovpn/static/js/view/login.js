@@ -4,18 +4,12 @@ angular.module(
 )
 .component('login', {
     templateUrl: '/js/view/login.tpl.html',
-    controller: LoginController
-//     controllAs: 'ctrl'
+    controller: ['$log', '$auth', LoginController],
 });
 
-function LoginController($log, $auth, $state) {
-    'ngInject';
+function LoginController($log, $auth) {
 
     this.submit = () => {
-        $auth.login(this.username, this.password).then(logged => {
-
-            if(logged)
-                $state.go('pyovpn.dashboard');
-        })
+        $auth.login(this.username, this.password);
     };
 }

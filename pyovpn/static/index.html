@@ -14,10 +14,10 @@
         <link rel="stylesheet" href="/css/site.css">
     </head>
     <body ng-app="pyovpn">
-        <ui-view>
+        <ui-view ng-if="$auth.logged">
         </ui-view>
 
-        <login-modal></login-modal>
+        <login ng-if="!$auth.logged && $auth.resolved" ng-cloak></login>
 
         <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
 
@@ -37,8 +37,6 @@
         <script src="/js/common/resource/user.js"></script>
         <script src="/js/common/resource/templateServer.js"></script>
         <script src="/js/common/resource/templateUser.js"></script>
-
-        <script src="/js/common/component/loginModal.js"></script>
 
         <script src="/js/view/layout.js"></script>
         <script src="/js/view/logout.js"></script>
