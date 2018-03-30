@@ -1,38 +1,44 @@
 'use strict';
 
-angular.module(
-    'vpn.common.auth',
-    ['vpn.common.websocket']
-).service('$auth', authService);
+authService.$inject = ['$websocket', '$state', '$q', 'loginModal'];
+
+angular
+    .module('vpn.common.auth', [
+        'vpn.common.websocket',
+        'pyovpn.component.loginModal',
+    ])
+    .service('$auth', authService);
 
 
-function authService($websocket, $state, $q) {
-    'ngInject';
-
+function authService($websocket, $state, $q, loginModal) {
     class Auth {
 
         constructor() {
             this.authData = {};
-            this.logged = $q.defer();
+            this.login = $q.defer();
+            this.logged = false
             this.token = this.getToken();
 
-            if(this.token) {
-                $websocket.emit({
-                    message: 'pyovpn.token',
-                    body: this.token
-                });
-            }
+            if (this.token) this.emitToken();
 
             $websocket.register('pyovpn.current', body => {
-                if(body.is_anonymouse === false) {
+                this.logged = body.is_anonymouse === false;
+                if (this.logged) {
                     console.log("LOGGED!!!");
-                    this.logged.resolve(true);
+                    this.login.resolve(true);
                 }
             });
         }
 
+        emitToken() {
+            $websocket.emit({
+                message: 'pyovpn.token',
+                body: this.token
+            });
+        }
+
         loginPromise() {
-            return this.logged.promise;
+            return this.login.promise;
         }
 
         login(username, password) {
@@ -46,6 +52,7 @@ function authService($websocket, $state, $q) {
                 if(data.message == 'pyovpn.login') {
                     angular.extend(this.authData, data.body);
                     this.setToken(this.body.token || '');
+                    this.emitToken();
                     return data.body.logged;
                 }
 
@@ -54,7 +61,8 @@ function authService($websocket, $state, $q) {
         }
 
         logout() {
-            this.logged = $q.defer();
+            this.login = $q.defer();
+            this.logged = false;
             console.log(`TOKEN ${this.token}`);
 
             $websocket.emit({
