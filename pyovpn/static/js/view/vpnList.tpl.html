@@ -4,8 +4,8 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Autostart</th>
-            <th>Running</th>
+            <th class="text-center">Autostart</th>
+            <th class="text-center">Running</th>
             <th>Users</th>
         </tr>
     </thead>
@@ -13,24 +13,42 @@
     <tbody>
         <tr ng-repeat="vpn in $ctrl.vpnList">
             <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
-            <td ng-bind="vpn.autostart"></td>
-            <td ng-bind="vpn.running"></td>
-            <td><span ng-repeat="user in vpn.users" ng-bind="user"></span></td>
+
+            <td class="text-center">
+                <span class="badge badge-pill" ng-class="vpn.autostart ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="vpn.autostart"></span>
+            </td>
+            <td class="text-center">
+                <span class="badge badge-pill" ng-class="vpn.running ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="vpn.running"></span>
+            </td>
+            <td>
+                <span class="badge badge-pill badge-info" ng-repeat="user in vpn.users" ng-bind="user"></span>
+            </td>
         </tr>
     </tbody>
 </table>
 
-<h3>Add vpn</h3>
-<form ng-submit="$ctrl.add()">
-    <table>
-        <tr>
-            <th>Name</th>
-            <td><input ng-model="$ctrl.new_vpn.name" /></td>
-        </tr>
-        <tr>
-            <th>Autostart</th>
-            <td><input ng-model="$ctrl.new_vpn.autostart" type="checkbox" /></td>
-        </tr>
-    </table>
-    <input type="submit" value="Add vpn" />
+
+<form name="addVPN" ng-submit="$ctrl.add()">
+    <fieldset>
+        <legend class="h5">Add VPN</legend>
+
+        <div class="form-inline">
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="input-icon-vpn"><i class="fab fa-expeditedssl"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="input-icon-vpn" ng-model="$ctrl.new_vpn.name" required>
+            </div>
+
+            <div class="form-check mb-2 mr-sm-2 mb-sm-0">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_vpn.autostart"> Autostart
+                </label>
+            </div>
+
+            <div class="col"></div>
+
+            <button type="submit" class="btn btn-primary" ng-disabled="!addVPN.$valid">Add VPN</button>
+        </div>
+    </fieldset>
 </form>
