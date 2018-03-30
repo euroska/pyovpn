@@ -46,15 +46,15 @@ function VpnFactory($log, $q, $websocket, $vpnDict) {
     class VPNRepository {
         constructor() {
             this.vpn = VPN;
-            $websocket.register('pyovpn.vpn.detail', this.vpnSet.bind(this));
-            $websocket.register('pyovpn.vpn.del', this.vpnDel.bind(this));
+            $websocket.register('pyovpn.vpn.detail', this.set.bind(this));
+            $websocket.register('pyovpn.vpn.del', this.del.bind(this));
         }
 
-        vpnAdd(vpn) {
-            return $websocket.emit({message: 'pyovpn.vpn.add', body: vpn}).then(body => $vpnDict[body.name]);
+        add(vpn) {
+            return $websocket.emit({message: 'pyovpn.vpn.add', body: vpn}).then(message => $vpnDict[message.body.name]);
         }
 
-        vpnSet(body) {
+        set(body) {
             let vpn = {};
 
             if (body.name in $vpnDict) {
@@ -68,14 +68,14 @@ function VpnFactory($log, $q, $websocket, $vpnDict) {
             return vpn;
         }
 
-        vpnDel(body) {
+        del(body) {
             if (body.name in $vpnDict) {
                 delete $vpnDict[body.name];
             }
         }
 
         get(name) {
-            return $websocket.emit({message: 'pyovpn.vpn.detail', body: name}).then(body => this.vpnUpdate(body));
+            return $websocket.emit({message: 'pyovpn.vpn.detail', body: name}).then(message => this.vpnUpdate(message.body));
         }
 
         list(params) {
@@ -87,7 +87,7 @@ function VpnFactory($log, $q, $websocket, $vpnDict) {
                 let vpnList = [];
 
                 for (let vpn of message.body) {
-                    vpnList.push(this.vpnSet(vpn));
+                    vpnList.push(this.set(vpn));
                 }
 
                 return vpnList;

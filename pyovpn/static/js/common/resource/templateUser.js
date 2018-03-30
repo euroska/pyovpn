@@ -43,9 +43,9 @@ function TemplateUserFactory($log, $q, $websocket, $templateUserDict) {
         }
     }
 
-    class UserRepository {
+    class TemplateUserRepository {
         constructor() {
-            this.user = User;
+            this.templateUser = TemplateUser;
             $websocket.register('pyovpn.template.user.detail', this.set.bind(this));
             $websocket.register('pyovpn.template.del', this.del.bind(this));
         }
@@ -81,7 +81,7 @@ function TemplateUserFactory($log, $q, $websocket, $templateUserDict) {
         }
     }
 
-    return new UserRepository();
+    return new TemplateUserRepository();
 }
 
 

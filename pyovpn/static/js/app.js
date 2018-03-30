@@ -10,7 +10,9 @@ var pyovpn = angular.module(
 
         'pyovpn.dashboard',
         'pyovpn.vpnlist',
-        'pyovpn.userlist'
+        'pyovpn.userlist',
+        'pyovpn.templateserverlist',
+        'pyovpn.templateuserlist'
     ]
 
 ).config(function($urlRouterProvider, $stateProvider) {
@@ -77,7 +79,7 @@ var pyovpn = angular.module(
     .state('pyovpn.template.server', {
         url: '/server',
         views: {
-            'main': 'dashboard'
+            'main': 'templateServerList'
         },
         resolve: {
 //             'vpnList': $vpn => []
@@ -86,13 +88,13 @@ var pyovpn = angular.module(
     .state('pyovpn.template.server.detail', {
         url: '/:name',
         views: {
-            'main': 'dashboard'
+            'main': 'templateSList'
         }
     })
     .state('pyovpn.template.user', {
         url: '/user',
         views: {
-            'main': 'dashboard'
+            'main': 'templateUserList'
         },
         resolve: {
 //             'vpnList': $vpn => []
