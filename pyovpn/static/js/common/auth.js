@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    authService.$inject = ['$websocket', '$state', '$q'];
+    authService.$inject = ['$websocket', '$state', '$q', '$log'];
 
     angular
         .module('vpn.common.auth', [
@@ -11,7 +11,7 @@
         .run(['$rootScope', '$auth', (rs, a) => rs.$auth = a]);
 
 
-    function authService($websocket, $state, $q) {
+    function authService($websocket, $state, $q, $log) {
         class Auth {
 
             constructor() {
@@ -27,10 +27,7 @@
                 $websocket.register('pyovpn.current', body => {
                     this.logged = body.is_anonymouse === false;
                     this.resolved = true;
-                    if (this.logged) {
-                        console.log("LOGGED!!!");
-                        this._loginDeferred.resolve(true);
-                    }
+                    if (this.logged) this._loginDeferred.resolve(true);
                 });
             }
 
@@ -67,7 +64,6 @@
             logout() {
                 this._loginDeferred = $q.defer();
                 this.logged = false;
-                console.log(`TOKEN ${this.token}`);
 
                 $websocket.emit({
                     message: 'pyovpn.logout',

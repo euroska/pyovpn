@@ -70,3 +70,9 @@
     padding: 15px;
     margin: 0 auto;
 }
+
+.table-sm .btn-sm {
+    padding: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+}

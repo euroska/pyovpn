@@ -3,11 +3,15 @@
 <form class="form-signin" style="" ng-submit="$ctrl.submit()">
     <h1 class="h3 mb-3 font-weight-normal">{{ $ctrl.t }}</h1>
 
-    <label for="inputUsername" class="sr-only">Username</label>
-    <input type="username" id="inputUsername" class="form-control" ng-model="$ctrl.username" placeholder="Username" required autofocus>
+    <p>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="username" id="inputUsername" class="form-control" ng-model="$ctrl.username" placeholder="Username" required autofocus autocomplete="username" aria-label="User name">
+    </p>
 
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" ng-model="$ctrl.password" placeholder="Password" required>
+    <p>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" ng-model="$ctrl.password" placeholder="Password" required autocomplete="current-password" aria-label="Password">
+    </p>
     <br />
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>
