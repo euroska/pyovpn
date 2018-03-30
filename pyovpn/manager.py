@@ -4,7 +4,7 @@ import logging
 import asyncio
 import hashlib
 import datetime
-from aiohttp.web import Application
+from aiohttp import web
 
 from .config import Config
 from .jsonrpc import JsonRPC
@@ -32,7 +32,7 @@ class Manager(object):
         self.websock = WebsocketProtocol(self)
         self.tokens = {}
 
-        self.app = Application()
+        self.app = web.Application()
         jsonrpc = self.config._data.get('web', {}).get('jsonrpc', '/api/jsonrpc')
         self.app.router.add_post(jsonrpc, self.jsonrpc)
 
@@ -40,7 +40,13 @@ class Manager(object):
         self.app.router.add_get(websock, self.websock)
 
         if self.config['debug']:
-            self.app.router.add_static('/', self.config['static_path'])
+            self.app.router.add_get(
+                '/',
+                lambda request: web.FileResponse(
+                    os.path.join(self.config['static_path'], 'index.html')
+                )
+            )
+            self.app.router.add_static('/*', self.config['static_path'])
 
     def hashPassword(self, password):
         return hashlib.sha256(password.encode('utf8')).hexdigest()
