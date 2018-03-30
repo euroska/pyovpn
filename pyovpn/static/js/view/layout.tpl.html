@@ -1,32 +1,32 @@
-<div class="row">
-    <!-- Sidebar -->
-    <nav class="col-2" id="nav">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                <a ui-sref="pyovpn.dashboard">Dashboard</a>
-            </li>
+<!-- Sidebar -->
+<nav id="nav">
+    <h3 class="sidebar-header">VPN</h3>
 
-            <li class="sidebar-brand">
-                <a ui-sref="pyovpn.userList">Users</a>
-            </li>
+    <ul class="list-unstyled components">
+        <li>
+            <a class="btn navbar-btn" ui-sref="pyovpn.dashboard" ui-sref-active="active">Dashboard</a>
+        </li>
 
-            <li class="sidebar-brand">
-                <a ui-sref="pyovpn.vpnList">VPNs</a>
-            </li>
+        <li>
+            <a class="btn navbar-btn" ui-sref="pyovpn.userList" ui-sref-active="active">Users</a>
+        </li>
 
-            <li class="sidebar-brand">
-                <a ui-sref="pyovpn.template.server">Templates server</a>
-            </li>
+        <li>
+            <a class="btn navbar-btn" ui-sref="pyovpn.vpnList" ui-sref-active="active">VPNs</a>
+        </li>
 
-            <li class="sidebar-brand">
-                <a ui-sref="pyovpn.template.user">Templates user</a>
-            </li>
-        </ul>
-        <a ng-click="$ctrl.logout()">Logout</a>
-    </nav>
+        <li>
+            <a class="btn navbar-btn" ui-sref="pyovpn.template.server" ui-sref-active="active">Templates server</a>
+        </li>
 
-    <content class="col-10" id="main">
-        <div ui-view="main">
-        </div>
-    </div>
-</div>
+        <li>
+            <a class="btn navbar-btn" ui-sref="pyovpn.template.user" ui-sref-active="active">Templates user</a>
+        </li>
+    </ul>
+    <a href="#" class="btn navbar-btn" ng-click="$ctrl.logout()">Logout</a>
+</nav>
+
+<!-- Main content -->
+<main id="main">
+    <div ui-view="main"></div>
+</main>

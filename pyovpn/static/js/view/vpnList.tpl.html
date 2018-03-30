@@ -1,19 +1,23 @@
-<h1>VPN list</h1>
+<h1 id="main-title">VPN list</h1>
 
-<table class="table table-condensed">
-    <tr>
-        <th>Name</th>
-        <th>Autostart</th>
-        <th>Running</th>
-        <th>Users</th>
-    </tr>
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Autostart</th>
+            <th>Running</th>
+            <th>Users</th>
+        </tr>
+    </thead>
 
-    <tr ng-repeat="vpn in $ctrl.vpnList">
-        <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
-        <td ng-bind="vpn.autostart"></td>
-        <td ng-bind="vpn.running"></td>
-        <td><span ng-repeat="user in vpn.users" ng-bind="user"></span></td>
-    </tr>
+    <tbody>
+        <tr ng-repeat="vpn in $ctrl.vpnList">
+            <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
+            <td ng-bind="vpn.autostart"></td>
+            <td ng-bind="vpn.running"></td>
+            <td><span ng-repeat="user in vpn.users" ng-bind="user"></span></td>
+        </tr>
+    </tbody>
 </table>
 
 <h3>Add vpn</h3>
