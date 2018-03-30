@@ -10,13 +10,12 @@ angular.module(
 
 function LoginController($log, $auth, $state) {
     'ngInject';
-    this.t = 'kokot';
 
     this.submit = () => {
         $auth.login(this.username, this.password).then(logged => {
 
             if(logged)
-                $state.go('auth.vpn');
+                $state.go('pyovpn.dashboard');
         })
     };
 }

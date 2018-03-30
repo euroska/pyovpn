@@ -19,7 +19,7 @@ function authService($websocket, $state, $q) {
 
             if(!this.authData.logged) {
                 deferred.resolve(true);
-//                 $state.go('login');
+                $state.go('login');
             }
             else {
                 deferred.resolve(true);

@@ -46,15 +46,15 @@ function UserFactory($log, $q, $websocket, $userDict) {
     class UserRepository {
         constructor() {
             this.user = User;
-            $websocket.register('pyovpn.user.detail', this.userSet.bind(this));
-            $websocket.register('pyovpn.user.del', this.userDel.bind(this));
+            $websocket.register('pyovpn.user.detail', this.set.bind(this));
+            $websocket.register('pyovpn.user.del', this.del.bind(this));
         }
 
         userAdd(user) {
             return $websocket.emit({message: 'pyovpn.user.add', body: user}).then(body => $userDict[body.name]);
         }
 
-        userSet(body) {
+        set(body) {
             let user = {};
 
             if (body.name in $userDict) {
@@ -68,14 +68,14 @@ function UserFactory($log, $q, $websocket, $userDict) {
             return user;
         }
 
-        userDel(body) {
+        del(body) {
             if (body.name in $userDict) {
                 delete $userDict[body.name];
             }
         }
 
         get(name) {
-            return $websocket.emit({message: 'pyovpn.user.detail', body: name}).then(body => this.userUpdate(body));
+            return $websocket.emit({message: 'pyovpn.user.detail', body: name});
         }
 
         list(params) {
@@ -87,7 +87,7 @@ function UserFactory($log, $q, $websocket, $userDict) {
                 let userList = [];
 
                 for (let user of message.body) {
-                    userList.push(this.userSet(user));
+                    userList.push(this.set(user));
                 }
 
                 return userList;

@@ -48,7 +48,7 @@ var pyovpn = angular.module(
         }
     })
     .state('pyovpn.user.detail', {
-        url: ':username',
+        url: '/:username',
         views: {
             'main': 'dashboard'
         }
@@ -63,7 +63,43 @@ var pyovpn = angular.module(
         }
     })
     .state('pyovpn.vpn.detail', {
-        url: ':name',
+        url: '/:name',
+        views: {
+            'main': 'dashboard'
+        }
+    })
+    .state('pyovpn.template', {
+        url: 'template',
+        views: {
+            'main': 'dashboard'
+        }
+    })
+    .state('pyovpn.template.server', {
+        url: '/server',
+        views: {
+            'main': 'dashboard'
+        },
+        resolve: {
+//             'vpnList': $vpn => []
+        }
+    })
+    .state('pyovpn.template.server.detail', {
+        url: '/:name',
+        views: {
+            'main': 'dashboard'
+        }
+    })
+    .state('pyovpn.template.user', {
+        url: '/user',
+        views: {
+            'main': 'dashboard'
+        },
+        resolve: {
+//             'vpnList': $vpn => []
+        }
+    })
+    .state('pyovpn.template.user.detail', {
+        url: '/:name',
         views: {
             'main': 'dashboard'
         }
