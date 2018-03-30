@@ -1,0 +1,34 @@
+#!/usr/bin/python3
+import sys
+import logging
+import argparse
+from pyovpn.manager import Manager
+from pyovpn.config import Config
+
+class PyOVPCtrl(object):
+
+    def __init__(self):
+        parser = argparse.ArgumentParser(
+            description='PyOVP controller',
+            epilog='Send me report ;)'
+        )
+        parser.add_argument('command', help="Subcommand to run")
+        args = parser.parse_args(sys.argv[1:2])
+        if not hasattr(self, args.command):
+            parser.print_help()
+            exit(1)
+
+        getattr(self, args.command)()
+
+    def generate(self):
+        parser = argparse.ArgumentParser(
+            description='Generate basic config'
+        )
+        parser.add_argument('-d', '--destination', default='/etc/pyovpn/pyovpn.yaml', help='Generate config to destination')
+        parser.add_argument('-s', --static', default='/var/lib/pyovpn', help='Set static path')
+
+    def collect(self):
+        parser = argparse.ArgumentParser(
+            description='Generate basic config'
+        )
+        parser.add_argument('-d', '--destination', default='/var/lib/pyovpn', help='Copy static to directory')

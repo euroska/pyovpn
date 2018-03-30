@@ -19,6 +19,7 @@ setup(
         'pytz'
     ],
     scripts=[
-        'bin/pyovpn'
+        'bin/pyovpn',
+        'bin/pyovpnctl',
     ],
 )
