@@ -21,9 +21,18 @@
             'pyovpn.templateserverlist',
             'pyovpn.templateuserlist'
         ]
-
     ).config(function($urlRouterProvider, $stateProvider, $websocketProvider) {
-        'ngInject';
+
+        let loc = window.location, new_uri;
+        if (window.location.protocol === "https:") {
+            new_uri = "wss:";
+        } else {
+            new_uri = "ws:";
+        }
+        new_uri += `//${window.location.host}/api/ws`;
+
+        $websocketProvider.url = new_uri;
+        $urlRouterProvider.otherwise('/');
 
         $websocketProvider.url = 'ws://localhost:8080/api/ws';
         $urlRouterProvider.otherwise('/');
