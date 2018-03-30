@@ -24,7 +24,7 @@ function UserFactory($log, $q, $websocket, $userDict) {
         }
 
         $delete() {
-            return $websocket.emit({message: 'pyovpn.user.del', body: this.name});
+            return $websocket.emit({message: 'pyovpn.user.del', body: this.username});
         }
 
 
@@ -50,32 +50,43 @@ function UserFactory($log, $q, $websocket, $userDict) {
             $websocket.register('pyovpn.user.del', this.del.bind(this));
         }
 
-        userAdd(user) {
-            return $websocket.emit({message: 'pyovpn.user.add', body: user}).then(body => $userDict[body.name]);
+        add(user) {
+            return $websocket.emit(
+                {message: 'pyovpn.user.add', body: user}
+            ).then(message => {
+                console.log(message.body);
+                return $userDict[message.body.username]
+            });
         }
 
         set(body) {
             let user = {};
 
-            if (body.name in $userDict) {
-                user = $userDict[body.name];
+            if (body.username in $userDict) {
+                user = $userDict[body.username];
                 user.$update(body);
             } else {
                 user = new User(body);
-                $userDict[body.name] = user;
+                $userDict[body.username] = user;
             }
-
             return user;
         }
 
         del(body) {
-            if (body.name in $userDict) {
-                delete $userDict[body.name];
+            if (body in $userDict) {
+                delete $userDict[body];
             }
         }
 
         get(name) {
-            return $websocket.emit({message: 'pyovpn.user.detail', body: name});
+            if(name in $userDict) {
+                return $q.resolve($userDict[name]);
+            }
+
+            return $websocket.emit({message: 'pyovpn.user.detail', body: name}).then(message => {
+                console.log(message, $userDict);
+                return $userDict[message.body.username];
+            });
         }
 
         list(params) {

@@ -63,7 +63,9 @@ class VpnApi(object):
     @isAutorized
     @api('pyovpn.vpn.detail')
     async def vpnDetail(self, body, user):
-        pass
+        if body in self.manager.vpns:
+            vpn = self.manager.vpns[body]
+            return vpn.serializeDetail()
 
     @isAdmin
     @api('pyovpn.vpn.set')

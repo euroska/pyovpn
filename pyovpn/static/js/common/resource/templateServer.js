@@ -54,20 +54,6 @@ function TemplateServerFactory($log, $q, $websocket, $templateServerDict) {
             return $websocket.emit({message: 'pyovpn.template.server.set', body: {name, template}}).then(body => $templateServerDict[body.name]);
         }
 
-        set(body) {
-            let user = {};
-
-            if (body.name in $userDict) {
-                user = $templateServerDict[body.name];
-                user.$update(body);
-            } else {
-                user = new TemplateServer(body);
-                $templateServerDict[body.name] = user;
-            }
-
-            return user;
-        }
-
         del(name) {
             if (body.name in $userDict) {
                 delete $userDict[body.name];
@@ -80,14 +66,9 @@ function TemplateServerFactory($log, $q, $websocket, $templateServerDict) {
             }
 
             return $websocket.emit({message: 'pyovpn.template.server.list', body: params}).then(message => {
-                let templateList = [];
-
-                for (let user of message.body) {
-                    templateList.push(this.update(user));
-                }
-
-                return templateList;
-            });
+                angular.extend($templateServerDict, message.body);
+                return $templateServerDict;
+            })
         }
     }
 

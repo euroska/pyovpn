@@ -1,3 +1,32 @@
-VPN list
+<h1>VPN list</h1>
 
-{{ $ctrl }}
+<table class="table table-condensed">
+    <tr>
+        <th>Name</th>
+        <th>Autostart</th>
+        <th>Running</th>
+        <th>Users</th>
+    </tr>
+
+    <tr ng-repeat="vpn in $ctrl.vpnList">
+        <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
+        <td ng-bind="vpn.autostart"></td>
+        <td ng-bind="vpn.running"></td>
+        <td><span ng-repeat="user in vpn.users" ng-bind="user"></span></td>
+    </tr>
+</table>
+
+<h3>Add vpn</h3>
+<form ng-submit="$ctrl.add()">
+    <table>
+        <tr>
+            <th>Name</th>
+            <td><input ng-model="$ctrl.new_vpn.name" /></td>
+        </tr>
+        <tr>
+            <th>Autostart</th>
+            <td><input ng-model="$ctrl.new_vpn.autostart" type="checkbox" /></td>
+        </tr>
+    </table>
+    <input type="submit" value="Add vpn" />
+</form>

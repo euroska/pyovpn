@@ -7,10 +7,20 @@ angular.module(
     controller: UserListController,
 //     controllAs: 'ctrl'
     bindings: {
-        userList: '='
     }
 });
 
-function UserListController($log, $auth) {
+function UserListController($log, $auth, $user, $userDict) {
     'ngInject';
+
+    this.userList = $userDict;
+
+    this.new_user = {
+        is_admin: false,
+        is_anonymouse: false
+    };
+
+    this.add = () => {
+        $user.add(this.new_user);
+    };
 }

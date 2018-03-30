@@ -64,19 +64,14 @@ function TemplateUserFactory($log, $q, $websocket, $templateUserDict) {
             }
         }
 
-        list(params) {
+      list(params) {
             if (typeof params === 'undefined') {
                 params = {};
             }
 
             return $websocket.emit({message: 'pyovpn.template.user.list', body: params}).then(message => {
-                let templateList = [];
-
-                for (let user of message.body) {
-                    templateList.push(this.update(user));
-                }
-
-                return templateList;
+                angular.extend($templateUserDict, message.body);
+                return $templateUserDict;
             });
         }
     }

@@ -74,8 +74,8 @@ function ws() {
                     } else {
 
                         if (msg.message in this.callbacks) {
-                            for (let i = 0; i < this.callbacks[msg.type].length; i++) {
-                                this.callbacks[msg.type][i](msg);
+                            for (let i = 0; i < this.callbacks[msg.message].length; i++) {
+                                this.callbacks[msg.message][i](msg.body);
                             }
                         }
 

@@ -54,8 +54,7 @@ class AuthApi(object):
     async def logout(self, body, user):
         return await self.manager.delToken(body)
 
-    @isAutorized
-    @api('pyovpn.token')
+    @api('pyovpn.current')
     async def token(self, body, user):
         return user
 

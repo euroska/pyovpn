@@ -38,7 +38,9 @@ class Manager(object):
 
         websock = jsonrpc = self.config._data.get('web', {}).get('websock', '/api/ws')
         self.app.router.add_get(websock, self.websock)
-        self.app.router.add_static('/', '/home/sauron/Projects/os/pyovpn/pyovpn/static/')
+
+        if self.config['debug']:
+            self.app.router.add_static('/', self.config['static_path'])
 
     def hashPassword(self, password):
         return hashlib.sha256(password.encode('utf8')).hexdigest()

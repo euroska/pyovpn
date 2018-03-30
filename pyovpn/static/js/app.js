@@ -7,9 +7,13 @@ var pyovpn = angular.module(
 
         'pyovpn.resource.vpn',
         'pyovpn.resource.user',
+        'pyovpn.resource.template.server',
+        'pyovpn.resource.template.user',
 
         'pyovpn.dashboard',
+        'pyovpn.vpn',
         'pyovpn.vpnlist',
+        'pyovpn.user',
         'pyovpn.userlist',
         'pyovpn.templateserverlist',
         'pyovpn.templateuserlist'
@@ -40,7 +44,8 @@ var pyovpn = angular.module(
             'main': 'dashboard'
         }
     })
-    .state('pyovpn.user', {
+
+    .state('pyovpn.userList', {
         url: 'user',
         views: {
             'main': 'userList'
@@ -49,13 +54,16 @@ var pyovpn = angular.module(
             'userList': $user => $user.list()
         }
     })
-    .state('pyovpn.user.detail', {
-        url: '/:username',
+    .state('pyovpn.userDetail', {
+        url: 'user/:username',
         views: {
-            'main': 'dashboard'
+            'main': 'user'
+        },
+        resolve: {
+            'user': ($stateParams, $user) => $user.get($stateParams.username)
         }
     })
-    .state('pyovpn.vpn', {
+    .state('pyovpn.vpnList', {
         url: 'vpn',
         views: {
             'main': 'vpnList'
@@ -64,10 +72,13 @@ var pyovpn = angular.module(
             'vpnList': $vpn => $vpn.list()
         }
     })
-    .state('pyovpn.vpn.detail', {
-        url: '/:name',
+    .state('pyovpn.vpnDetail', {
+        url: 'vpn/:name',
         views: {
-            'main': 'dashboard'
+            'main': 'vpn'
+        },
+        resolve: {
+            'vpn': ($stateParams, $vpn) => $vpn.get($stateParams.name)
         }
     })
     .state('pyovpn.template', {
@@ -82,13 +93,13 @@ var pyovpn = angular.module(
             'main': 'templateServerList'
         },
         resolve: {
-//             'vpnList': $vpn => []
+            'temlateList': $templateServer => $templateServer.list()
         }
     })
     .state('pyovpn.template.server.detail', {
         url: '/:name',
         views: {
-            'main': 'templateSList'
+            'main': 'templateServerList'
         }
     })
     .state('pyovpn.template.user', {
@@ -97,7 +108,7 @@ var pyovpn = angular.module(
             'main': 'templateUserList'
         },
         resolve: {
-//             'vpnList': $vpn => []
+            'temlateList': $templateUser => $templateUser.list()
         }
     })
     .state('pyovpn.template.user.detail', {

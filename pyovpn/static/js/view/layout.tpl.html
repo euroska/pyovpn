@@ -7,11 +7,11 @@
             </li>
 
             <li class="sidebar-brand">
-                <a ui-sref="pyovpn.user">Users</a>
+                <a ui-sref="pyovpn.userList">Users</a>
             </li>
 
             <li class="sidebar-brand">
-                <a ui-sref="pyovpn.vpn">VPNs</a>
+                <a ui-sref="pyovpn.vpnList">VPNs</a>
             </li>
 
             <li class="sidebar-brand">
@@ -23,8 +23,8 @@
             </li>
         </ul>
     </nav>
+
     <content class="col-10" id="main">
-        {{ $ctrl }}
         <div ui-view="main">
         </div>
     </div>

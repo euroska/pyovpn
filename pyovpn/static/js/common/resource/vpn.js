@@ -75,7 +75,15 @@ function VpnFactory($log, $q, $websocket, $vpnDict) {
         }
 
         get(name) {
-            return $websocket.emit({message: 'pyovpn.vpn.detail', body: name}).then(message => this.vpnUpdate(message.body));
+            if(name in $vpnDict) {
+                let deferred = $q.defer()
+                deferred.resolve($vpnDict[name])
+                return deferred.promise;
+            }
+
+            return $websocket.emit(
+                {message: 'pyovpn.vpn.detail', body: name}
+            ).then(message => $vpnDict[name]);
         }
 
         list(params) {

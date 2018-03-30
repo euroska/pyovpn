@@ -2,11 +2,11 @@ import os
 from .decorators import isAdmin, isAutorized, api
 
 
-class TemplateClientApi(object):
+class TemplateUserApi(object):
     @isAdmin
-    @api('pyovpn.template.client.list')
+    @api('pyovpn.template.user.list')
     async def templateClientList(self, body, user):
-        path = os.path.join(self.manager.config['data_path'],'templates/client')
+        path = os.path.join(self.manager.config['data_path'],'templates/user')
         templates = {}
         for path, dirs, files in os.walk(path):
             for template in files:
@@ -16,11 +16,11 @@ class TemplateClientApi(object):
         return templates
 
     @isAdmin
-    @api('pyovpn.template.client.set', message_out='pyovpn.template.client.detail')
+    @api('pyovpn.template.user.set', message_out='pyovpn.template.user.detail')
     async def templateClientSet(self, body, user):
         path = os.path.join(
             self.manager.config['data_path'],
-            'templates/client',
+            'templates/user',
             body['name']
         )
 
@@ -33,11 +33,11 @@ class TemplateClientApi(object):
         }
 
     @isAdmin
-    @api('pyovpn.template.client.del')
+    @api('pyovpn.template.user.del')
     async def templateClientDel(self, body, user):
         path = os.path.join(
             self.manager.config['data_path'],
-            'templates/client',
+            'templates/user',
             body
         )
         if os.path.exists(path):

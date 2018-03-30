@@ -3,15 +3,15 @@ import inspect
 import jsonschema
 import traceback
 from .auth import AuthApi
-from .templateServer import TemplateServerApi
-from .templateClient import TemplateClientApi
+from .template_server import TemplateServerApi
+from .template_user import TemplateUserApi
 from .vpn import VpnApi
 from .user import UserApi
 from .decorators import api
 from .errors import ApiError, MessageNotImplemented, InternalError, SchemaError
 
 
-class Api(AuthApi, UserApi, TemplateServerApi, TemplateClientApi, VpnApi):
+class Api(AuthApi, UserApi, TemplateServerApi, TemplateUserApi, VpnApi):
 
     def __init__(self, manager):
         '''

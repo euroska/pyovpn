@@ -1,3 +1,50 @@
-User list
+<h3>User list</h3>
+<!--
+<label for="filter">Filter</label>
+<input ng-model="$ctrl.filter" id="filter"/>
 
-{{ $ctrl }}
+<br />
+<br />
+-->
+<table class="table table-condensed">
+    <tr>
+        <th>Username</th>
+        <th>Is admin</th>
+        <th>Is anonymouse</th>
+        <th>Vpns</th>
+        <th>Actions</th>
+    </tr>
+
+    <tr ng-repeat="(username, user) in $ctrl.userList">
+        <td>
+            <a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a>
+        </td>
+        <td ng-bind="user.is_admin"></td>
+        <td ng-bind="user.is_anonymouse"></td>
+        <td><span ng-repeat="vpn in user.vpns" ng-bind="vpn"></span></td>
+        <td>
+            <a ng-click="user.$delete()">RM</a>
+        </td>
+    </tr>
+</table>
+
+<h3>Add user</h3>
+<form ng-submit="$ctrl.add()">
+    <table>
+        <tr>
+            <th>Username</th>
+            <td><input ng-model="$ctrl.new_user.username" /></td>
+        </tr>
+
+        <tr>
+            <th>Password</th>
+            <td><input ng-model="$ctrl.new_user.password" type="password"/></td>
+        </tr>
+
+        <tr>
+            <th>Is admin</th>
+            <td><input ng-model="$ctrl.new_user.is_admin" type="checkbox" /></td>
+        </tr>
+    </table>
+    <input type="submit" value="Add user" />
+</form>
