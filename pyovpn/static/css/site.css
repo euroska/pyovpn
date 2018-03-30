@@ -11,12 +11,16 @@
     max-width: 85rem;
 }
 
-#main-title {
+#top-nav {
     position: fixed;
     top: 0;
     left: 15rem;
     right: 0;
     z-index: 10;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 0;
 }
 
 #nav {
@@ -31,16 +35,19 @@
 
 .sidebar-header {
     display: block;
+    font-size: 1.6rem;
+    line-height: 1.25;
 }
 
-.sidebar-header, #main-title {
+.sidebar-header, #top-nav {
     background-color: #fff;
     border-bottom: 1px solid #dee2e6;
     height: 3rem;
     margin: 0;
     padding: .5rem 1rem;
+}
+.sidebar-header, h1#top-nav, div#top-nav h1 {
     font-size: 1.6rem;
-    line-height: 1.25;
 }
 
 .navbar-btn {

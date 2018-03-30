@@ -1,3 +1,6 @@
-<h2>User detail</h2>
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.userList">Users</a></li>
+    <li class="breadcrumb-item active" aria-current="page" ng-bind="$ctrl.user.username">User</li>
+</ol>
 
-{{ $ctrl }}
+{{ $ctrl.user }}
