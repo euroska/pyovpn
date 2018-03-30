@@ -8,11 +8,11 @@ setup(
     author='Martin Miksanik, Jiri Peterek',
     author_email='miksanik@gmail.com, jiri.peterek@gmail.com',
     url='https://github.com/euroska/pyovpn',
-    packages=find_packages('pyovpn'),
+    packages=find_packages(),
     include_package_data=True,
     install_requires=[
         'aiohttp',
-        'yaml',
+        'pyyaml',
         'jsonschema',
         'jinja2',
         'cryptography',
