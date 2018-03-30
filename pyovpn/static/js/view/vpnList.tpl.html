@@ -30,7 +30,7 @@
 </table>
 
 
-<form name="addVPN" ng-submit="$ctrl.add()">
+<form name="$ctrl.vpnAddForm" ng-submit="$ctrl.vpnAdd()" ng-hide="$ctrl.vpnAddPending">
     <fieldset>
         <legend class="h5">Add VPN</legend>
 
@@ -50,7 +50,11 @@
 
             <div class="col"></div>
 
-            <button type="submit" class="btn btn-primary" ng-disabled="!addVPN.$valid">Add VPN</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="!$ctrl.vpnAddForm.$valid">Add VPN</button>
         </div>
     </fieldset>
 </form>
+
+<p class="text-center pt-2 pb-2" ng-show="$ctrl.vpnAddPending">
+    <i class="fas fa-cog fa-spin"></i> Creating VPN&hellip;
+</p>

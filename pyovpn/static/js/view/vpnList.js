@@ -15,16 +15,26 @@
 
     function VpnListController($log, $auth, $vpn) {
 
-        this.new_vpn = {
-            autostart: false,
-            subject: {
-                o: 'Test',
-                ou: 'Test'
-            }
+        this.vpnAdd = () => {
+            this.vpnAddPending = true;
+            $vpn.add(this.new_vpn)
+                .then(resetNewVpn.bind(this))
+                .catch(resetNewVpn.bind(this));
         };
 
-        this.add = () => {
-            $vpn.add(this.new_vpn);
-        };
+        this.$postLink = () => resetNewVpn.call(this);
+
+        function resetNewVpn() {
+            this.vpnAddPending = false;
+            this.vpnAddForm.$setUntouched();
+            this.vpnAddForm.$setPristine();
+            this.new_vpn = {
+                autostart: false,
+                subject: {
+                    o: 'Test',
+                    ou: 'Test'
+                }
+            };
+        }
     }
 }());
