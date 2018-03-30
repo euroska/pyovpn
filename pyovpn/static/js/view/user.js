@@ -1,16 +1,19 @@
+(function () {
+    'use strict';
 
-angular.module(
-    'pyovpn.user', []
-)
-.component('user', {
-    templateUrl: '/js/view/user.tpl.html',
-    controller: UserController,
-//     controllAs: 'ctrl'
-    bindings: {
-        user: '='
-    }
-});
+    angular.module(
+        'pyovpn.user', []
+    )
+    .component('user', {
+        templateUrl: '/js/view/user.tpl.html',
+        controller: UserController,
+    //     controllAs: 'ctrl'
+        bindings: {
+            user: '='
+        }
+    });
 
-function UserController($log, $auth) {
-    'ngInject';
-}
+    function UserController($log, $auth) { }
+}());
+
+

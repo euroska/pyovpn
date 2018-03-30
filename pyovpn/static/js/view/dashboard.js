@@ -1,13 +1,18 @@
+(function () {
+    'use strict';
 
-angular.module(
-    'pyovpn.dashboard', []
-)
-.component('dashboard', {
-    templateUrl: '/js/view/dashboard.tpl.html',
-    controller: DashboardController
-});
+    const dashboardComponent = {
+        templateUrl: '/js/view/dashboard.tpl.html',
+        controller: DashboardController
+    };
 
-function DashboardController($log) {
-    'ngInject';
-}
+    angular
+        .module('pyovpn.dashboard', [])
+        .component('dashboard', dashboardComponent);
+
+    function DashboardController($log) {
+
+    }
+
+}());
 

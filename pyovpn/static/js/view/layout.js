@@ -1,15 +1,19 @@
+(function () {
+    'use strict';
 
-angular.module(
-    'pyovpn.layout', []
-)
-.component('layout', {
-    bindings: { },
-    templateUrl: '/js/view/layout.tpl.html',
-    controller: LayoutController
-});
+    const layoutComponent = {
+        bindings: { },
+        templateUrl: '/js/view/layout.tpl.html',
+        controller: LayoutController
+    };
 
-function LayoutController($log, $auth) {
-    'ngInject';
+    angular
+        .module('pyovpn.layout', [])
+        .component('layout', layoutComponent);
 
-    this.logout = () => $auth.logout();
-}
+    function LayoutController($log, $auth) {
+        this.logout = () => $auth.logout();
+    }
+}());
+
+

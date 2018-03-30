@@ -3,6 +3,7 @@
  */
 
 (function() {
+    'use strict';
 
     function modalService($compile, $q, $controller, $rootScope, $templateRequest, $templateCache, ) {
         let el;

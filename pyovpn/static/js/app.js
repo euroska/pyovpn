@@ -1,117 +1,121 @@
-var pyovpn = angular.module(
+(function () {
+    'use strict';
 
-    'pyovpn', [
-        'ui.router',
-        'pyovpn.login',
-        'pyovpn.layout',
+    window.pyovpn = angular.module(
 
-        'pyovpn.resource.vpn',
-        'pyovpn.resource.user',
-        'pyovpn.resource.template.server',
-        'pyovpn.resource.template.user',
+        'pyovpn', [
+            'ui.router',
+            'pyovpn.login',
+            'pyovpn.layout',
 
-        'pyovpn.dashboard',
-        'pyovpn.vpn',
-        'pyovpn.vpnlist',
-        'pyovpn.user',
-        'pyovpn.userlist',
-        'pyovpn.templateserverlist',
-        'pyovpn.templateuserlist'
-    ]
+            'pyovpn.resource.vpn',
+            'pyovpn.resource.user',
+            'pyovpn.resource.template.server',
+            'pyovpn.resource.template.user',
 
-).config(function($urlRouterProvider, $stateProvider, $websocketProvider) {
-    'ngInject';
+            'pyovpn.dashboard',
+            'pyovpn.vpn',
+            'pyovpn.vpnlist',
+            'pyovpn.user',
+            'pyovpn.userlist',
+            'pyovpn.templateserverlist',
+            'pyovpn.templateuserlist'
+        ]
 
-    $websocketProvider.url = 'ws://localhost:8080/api/ws';
-    $urlRouterProvider.otherwise('/');
+    ).config(function($urlRouterProvider, $stateProvider, $websocketProvider) {
+        'ngInject';
 
-    $stateProvider
-        .state('pyovpn', {
-            abstract: true,
-            component: 'layout',
-            url: '/',
-            resolve: {
-                logged: $auth => $auth.loginPromise()
-            }
-        })
-        .state('pyovpn.dashboard', {
-            url: '',
-            views: {
-                'main': 'dashboard'
-            }
-        })
+        $websocketProvider.url = 'ws://localhost:8080/api/ws';
+        $urlRouterProvider.otherwise('/');
 
-        .state('pyovpn.userList', {
-            url: 'user',
-            views: {
-                'main': 'userList'
-            },
-            resolve: {
-                'userList': $user => $user.list()
-            }
-        })
-        .state('pyovpn.userDetail', {
-            url: 'user/:username',
-            views: {
-                'main': 'user'
-            },
-            resolve: {
-                'user': ($stateParams, $user) => $user.get($stateParams.username)
-            }
-        })
-        .state('pyovpn.vpnList', {
-            url: 'vpn',
-            views: {
-                'main': 'vpnList'
-            },
-            resolve: {
-                'vpnList': $vpn => $vpn.list()
-            }
-        })
-        .state('pyovpn.vpnDetail', {
-            url: 'vpn/:name',
-            views: {
-                'main': 'vpn'
-            },
-            resolve: {
-                'vpn': ($stateParams, $vpn) => $vpn.get($stateParams.name)
-            }
-        })
-        .state('pyovpn.template', {
-            url: 'template',
-            views: {
-                'main': 'dashboard'
-            }
-        })
-        .state('pyovpn.template.server', {
-            url: '/server',
-            views: {
-                'main': 'templateServerList'
-            },
-            resolve: {
-                'temlateList': $templateServer => $templateServer.list()
-            }
-        })
-        .state('pyovpn.template.server.detail', {
-            url: '/:name',
-            views: {
-                'main': 'templateServerList'
-            }
-        })
-        .state('pyovpn.template.user', {
-            url: '/user',
-            views: {
-                'main': 'templateUserList'
-            },
-            resolve: {
-                'temlateList': $templateUser => $templateUser.list()
-            }
-        })
-        .state('pyovpn.template.user.detail', {
-            url: '/:name',
-            views: {
-                'main': 'dashboard'
-            }
-        })
-        ;
-});
+        $stateProvider
+            .state('pyovpn', {
+                abstract: true,
+                component: 'layout',
+                url: '/',
+                resolve: {
+                    logged: $auth => $auth.loginPromise()
+                }
+            })
+            .state('pyovpn.dashboard', {
+                url: '',
+                views: {
+                    'main': 'dashboard'
+                }
+            })
+
+            .state('pyovpn.userList', {
+                url: 'user',
+                views: {
+                    'main': 'userList'
+                },
+                resolve: {
+                    'userList': $user => $user.list()
+                }
+            })
+            .state('pyovpn.userDetail', {
+                url: 'user/:username',
+                views: {
+                    'main': 'user'
+                },
+                resolve: {
+                    'user': ($stateParams, $user) => $user.get($stateParams.username)
+                }
+            })
+            .state('pyovpn.vpnList', {
+                url: 'vpn',
+                views: {
+                    'main': 'vpnList'
+                },
+                resolve: {
+                    'vpnList': $vpn => $vpn.list()
+                }
+            })
+            .state('pyovpn.vpnDetail', {
+                url: 'vpn/:name',
+                views: {
+                    'main': 'vpn'
+                },
+                resolve: {
+                    'vpn': ($stateParams, $vpn) => $vpn.get($stateParams.name)
+                }
+            })
+            .state('pyovpn.template', {
+                url: 'template',
+                views: {
+                    'main': 'dashboard'
+                }
+            })
+            .state('pyovpn.template.server', {
+                url: '/server',
+                views: {
+                    'main': 'templateServerList'
+                },
+                resolve: {
+                    'temlateList': $templateServer => $templateServer.list()
+                }
+            })
+            .state('pyovpn.template.server.detail', {
+                url: '/:name',
+                views: {
+                    'main': 'templateServerList'
+                }
+            })
+            .state('pyovpn.template.user', {
+                url: '/user',
+                views: {
+                    'main': 'templateUserList'
+                },
+                resolve: {
+                    'temlateList': $templateUser => $templateUser.list()
+                }
+            })
+            .state('pyovpn.template.user.detail', {
+                url: '/:name',
+                views: {
+                    'main': 'dashboard'
+                }
+            })
+            ;
+    });
+}());

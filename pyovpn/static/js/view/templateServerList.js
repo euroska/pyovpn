@@ -1,17 +1,23 @@
+(function () {
+    'use strict';
 
-angular.module(
-    'pyovpn.templateserverlist', []
-)
-.component('templateServerList', {
-    templateUrl: '/js/view/templateServerList.tpl.html',
-    controller: TemplateServerListController,
-//     controllAs: 'ctrl'
-    bindings: {
-        templateList: '='
+    const templateServerListComponent = {
+        templateUrl: '/js/view/templateServerList.tpl.html',
+        controller: TemplateServerListController,
+    //     controllAs: 'ctrl'
+        bindings: {
+            templateList: '='
+        }
+    };
+
+    angular
+        .module('pyovpn.templateserverlist', [])
+        .component('templateServerList', templateServerListComponent);
+
+    function TemplateServerListController($log, $auth) {
+
     }
-});
+}());
 
-function TemplateServerListController($log, $auth) {
-    'ngInject';
-}
+
 
