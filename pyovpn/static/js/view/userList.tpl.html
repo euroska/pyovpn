@@ -25,12 +25,14 @@
                 <a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a>
             </td>
             <td class="text-center">
-                <span class="badge" ng-class="user.is_admin ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_admin"></span>
+                <span class="badge badge-pill" ng-class="user.is_admin ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_admin"></span>
             </td>
             <td class="text-center">
-                <span class="badge" ng-class="user.is_anonymouse ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_anonymouse"></span>
+                <span class="badge badge-pill" ng-class="user.is_anonymouse ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_anonymouse"></span>
             </td>
-            <td><span ng-repeat="vpn in user.vpns" ng-bind="vpn"></span></td>
+            <td>
+                <span class="badge badge-pill badge-info" ng-repeat="vpn in user.vpns" ng-bind="vpn"></span>
+            </td>
             <td class="text-right">
                 <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.userDelete(user)">
                     <i class="fas fa-times"></i>
