@@ -8,6 +8,8 @@ angular.module(
     controller: LayoutController
 });
 
-function LayoutController($log) {
+function LayoutController($log, $auth) {
     'ngInject';
+
+    this.logout = () => $auth.logout();
 }

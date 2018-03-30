@@ -2,6 +2,7 @@ var pyovpn = angular.module(
 
     'pyovpn', [
         'ui.router',
+        'pyovpn.logout',
         'pyovpn.login',
         'pyovpn.layout',
 
@@ -19,23 +20,26 @@ var pyovpn = angular.module(
         'pyovpn.templateuserlist'
     ]
 
-).config(function($urlRouterProvider, $stateProvider) {
+).config(function($urlRouterProvider, $stateProvider, $websocketProvider) {
     'ngInject';
 
+    $websocketProvider.url = 'ws://localhost:8080/api/ws';
     $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('login', {
         url: '/login',
         component: 'login'
     })
+    .state('logout', {
+        url: '/logout',
+        component: 'logout'
+    })
     .state('pyovpn', {
         abstract: true,
         component: 'layout',
         url: '/',
         resolve: {
-            logged: function($auth) {
-                return $auth.loginRedirect();
-            }
+            logged: $auth => $auth.loginPromise()
         }
     })
     .state('pyovpn.dashboard', {

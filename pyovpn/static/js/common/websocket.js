@@ -3,53 +3,34 @@
 angular.module(
     'vpn.common.websocket',
     [])
-    .provider('$websocket', ws);
+    .provider('$websocket', WebSocketProvider);
 
-function ws() {
+function WebSocketProvider() {
     'ngInject';
 
     return {
-        url: 'ws://localhost:8080/api/ws', setUrl: function(url = null) {
-            this.url = url;
-            return this;
-        },
+        url: 'unknown',
+        reconnectDelay: 2000,
 
         $get: function($q, $log, $rootScope, $timeout) {
-            let _url = this.url;
+            const self = this;
 
-            class WSClient {
-                constructor(url = _url, _opt = {}) {
-                    {
-                        let {
-                            reconnectDelay = 2000
-                        } = _opt;
-
-                        this.opt = {reconnectDelay};
-                    }
-
-                    this.urlSet(url);
+            class WebSocketClient {
+                constructor() {
                     this.connect();
                     this.promisses = {};
                     this.callbacks = {};
                 }
 
-                urlSet(url = _url) {
-                    if (angular.isString(url)) {
-                        this.url = url;
-                    }
-
-                    return this;
-                }
-
                 connect() {
                     this.timer = null;
 
-                    if (!this.url) {
+                    if (!self.url) {
                         $log.error("$websocket - connect:", "unknown WebSocket url");
                         return this;
                     }
 
-                    this.ws = new WebSocket(this.url);
+                    this.ws = new WebSocket(self.url);
                     this.ws.onopen = this.onopen.bind(this);
                     this.ws.onclose = this.onclose.bind(this);
                     this.ws.onmessage = this.onmessage.bind(this);
@@ -114,9 +95,9 @@ function ws() {
 
                 onclose() {
                     this.$opened = false;
-                    if (!this.timer && this.opt.reconnectDelay) {
-                        this.timer = setTimeout(this.connect.bind(this), this.opt.reconnectDelay);
-                    } else if (!this.opt.reconnectDelay) {
+                    if (!this.timer && self.reconnectDelay) {
+                        this.timer = setTimeout(this.connect.bind(this), self.reconnectDelay);
+                    } else if (!self.reconnectDelay) {
                         this.connect();
                     }
 
@@ -156,7 +137,7 @@ function ws() {
                 }
             }
 
-            return new WSClient();
+            return new WebSocketClient();
         }
     };
 }

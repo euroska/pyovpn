@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class Manager(object):
     ANONYMOUSE = {
         'username': 'Anonymouse',
-        'is_admin': True,
-        'is_anonymouse': False,
+        'is_admin': False,
+        'is_anonymouse': True,
         'password': '',
     }
 

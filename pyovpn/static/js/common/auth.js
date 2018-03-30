@@ -8,23 +8,31 @@ angular.module(
 
 function authService($websocket, $state, $q) {
     'ngInject';
+
     class Auth {
 
         constructor() {
             this.authData = {};
+            this.logged = $q.defer();
+            this.token = this.getToken();
+
+            if(this.token) {
+                $websocket.emit({
+                    message: 'pyovpn.token',
+                    body: this.token
+                });
+            }
+
+            $websocket.register('pyovpn.current', body => {
+                if(body.is_anonymouse === false) {
+                    console.log("LOGGED!!!");
+                    this.logged.resolve(true);
+                }
+            });
         }
 
-        loginRedirect() {
-            let deferred = $q.defer();
-
-            if(!this.authData.logged) {
-                deferred.resolve(true);
-                $state.go('login');
-            }
-            else {
-                deferred.resolve(true);
-            }
-            return deferred;
+        loginPromise() {
+            return this.logged.promise;
         }
 
         login(username, password) {
@@ -37,7 +45,7 @@ function authService($websocket, $state, $q) {
             }).then(data => {
                 if(data.message == 'pyovpn.login') {
                     angular.extend(this.authData, data.body);
-                    console.log(this.authData);
+                    this.setToken(this.body.token || '');
                     return data.body.logged;
                 }
 
@@ -45,8 +53,28 @@ function authService($websocket, $state, $q) {
             });
         }
 
-        token(token) {
+        logout() {
+            this.logged = $q.defer();
+            console.log(`TOKEN ${this.token}`);
+
+            $websocket.emit({
+                message: 'pyovpn.logout',
+                body: this.token
+            }).then(() =>  {
+                this.setToken('');
+                $state.go('logout');
+            });
         }
+
+        setToken(token) {
+            this.token = token;
+            localStorage.setItem('TOKEN', token);
+        }
+
+        getToken() {
+            return localStorage.getItem('TOKEN');
+        }
+
     }
 
     return new Auth();
