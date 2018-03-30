@@ -51,6 +51,7 @@
 }
 
 .navbar-btn {
+    background-color: transparent;
     border-radius: 0;
     display: block;
     text-align: left;

@@ -16,19 +16,17 @@
 
         this.userList = $userDict;
 
-        this.new_user = {
-            is_admin: false,
-            is_anonymouse: false
-        };
+        this.userAdd = () => $user.add(this.new_user).then(resetNewUser.bind(this));
+        this.userDelete = user => confirm("Are you sure?") && user.$delete();
+        this.$postLink = () => resetNewUser.call(this);
 
-        this.add = () => {
-            $user.add(this.new_user);
-        };
-
-        this.userDelete = user => {
-            if (confirm("Are you sure?")) {
-                user.$delete();
-            }
-        };
+        function resetNewUser() {
+            this.userAddForm.$setUntouched();
+            this.userAddForm.$setPristine();
+            this.new_user = {
+                is_admin: false,
+                is_anonymouse: false
+            };
+        }
     }
 }());

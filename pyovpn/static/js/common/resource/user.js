@@ -44,6 +44,10 @@
 
             $serialize() {
                 return {
+                    username: this.username,
+                    is_admin: this.is_admin,
+                    is_anonymouse: this.is_anonymouse,
+                    vpns: this.vpns,
                 };
             }
         }

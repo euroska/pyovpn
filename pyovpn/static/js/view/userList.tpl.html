@@ -43,7 +43,7 @@
     </tbody>
 </table>
 
-<form name="addUser" ng-submit="$ctrl.add()">
+<form name="$ctrl.userAddForm" ng-submit="$ctrl.userAdd()" autocomplete="off">
     <fieldset>
         <legend class="h5">Add user</legend>
 
@@ -52,7 +52,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="input-icon-user"><i class="fas fa-user"></i></span>
                 </div>
-                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="input-icon-user" ng-model="$ctrl.new_user.username"
+                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="input-icon-user" autocomplete="nope" ng-model="$ctrl.new_user.username"
                     required>
             </div>
 
@@ -60,7 +60,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="input-icon-password"><i class="fas fa-key"></i></span>
                 </div>
-                <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="input-icon-password" ng-model="$ctrl.new_user.password"
+                <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="input-icon-password" autocomplete="new-password" ng-model="$ctrl.new_user.password"
                     required>
             </div>
 
@@ -72,7 +72,7 @@
 
             <div class="col"></div>
 
-            <button type="submit" class="btn btn-primary" ng-disabled="!addUser.$valid">Add user</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="!$ctrl.userAddForm.$valid">Add user</button>
         </div>
     </fieldset>
 </form>
