@@ -23,4 +23,10 @@ function UserListController($log, $auth, $user, $userDict) {
     this.add = () => {
         $user.add(this.new_user);
     };
+
+    this.userDelete = user => {
+        if (confirm("Are you sure?")) {
+            user.$delete();
+        }
+    };
 }

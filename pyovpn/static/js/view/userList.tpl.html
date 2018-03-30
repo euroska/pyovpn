@@ -1,4 +1,6 @@
-<h3>User list</h3>
+
+<h1 id="main-title">User list</h1>
+
 <!--
 <label for="filter">Filter</label>
 <input ng-model="$ctrl.filter" id="filter"/>
@@ -6,49 +8,68 @@
 <br />
 <br />
 -->
-<table class="table table-condensed">
-    <tr>
-        <th>Username</th>
-        <th>Is admin</th>
-        <th>Is anonymouse</th>
-        <th>Vpns</th>
-        <th>Actions</th>
-    </tr>
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Is admin</th>
+            <th>Is anonymouse</th>
+            <th>Vpns</th>
+            <th class="text-right">Actions</th>
+        </tr>
+    </thead>
 
-    <tr ng-repeat="(username, user) in $ctrl.userList">
-        <td>
-            <a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a>
-        </td>
-        <td ng-bind="user.is_admin"></td>
-        <td ng-bind="user.is_anonymouse"></td>
-        <td><span ng-repeat="vpn in user.vpns" ng-bind="vpn"></span></td>
-        <td>
-            <a ng-click="user.$delete()">RM</a>
-        </td>
-    </tr>
+    <tbody>
+        <tr ng-repeat="(username, user) in $ctrl.userList">
+            <td>
+                <a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a>
+            </td>
+            <td ng-bind="user.is_admin"></td>
+            <td ng-bind="user.is_anonymouse"></td>
+            <td><span ng-repeat="vpn in user.vpns" ng-bind="vpn"></span></td>
+            <td class="text-right">
+                <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.userDelete(user)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+            </td>
+        </tr>
+    </tfoot>
 </table>
 
-<h3>Add user</h3>
-<form class="form-inline" ng-submit="$ctrl.add()">
-    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="input-icon-user"><i class="fas fa-user"></i></span>
+<form ng-submit="$ctrl.add()">
+    <fieldset>
+        <legend class="h5">Add user</legend>
+        <div class="form-inline">
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="input-icon-user"><i class="fas fa-user"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="input-icon-user" ng-model="$ctrl.new_user.username">
+            </div>
+
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="input-icon-password"><i class="fas fa-key"></i></span>
+                </div>
+                <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="input-icon-password" ng-model="$ctrl.new_user.password">
+            </div>
+
+            <div class="form-check mb-2 mr-sm-2 mb-sm-0">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_user.is_admin"> Is admin
+                </label>
+            </div>
+
+            <div class="col"></div>
+
+            <button type="submit" class="btn btn-primary">Add user</button>
         </div>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="input-icon-user" ng-model="$ctrl.new_user.username">
-    </div>
-
-    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="input-icon-password"><i class="fas fa-key"></i></span>
-        </div>
-        <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="input-icon-password" ng-model="$ctrl.new_user.password">
-    </div>
-
-    <div class="form-check mb-2 mr-sm-2 mb-sm-0">
-        <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_user.is_admin"> Is admin
-        </label>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Add user</button>
+    </fieldset>
 </form>
+
