@@ -1,3 +1,5 @@
+import os
+import shutil
 from .decorators import isAdmin, isAutorized, api
 from .errors import ApiError
 from ..vpn import VPN
@@ -41,7 +43,26 @@ class VpnApi(object):
     @isAdmin
     @api('pyovpn.vpn.del')
     async def vpnDel(self, body, user):
-        pass
+        if body in self.manager.vpns:
+            vpn = self.manager.vpns[body]
+            vpn.kill()
+            del self.manager.vpns[body]
+
+        if body in self.manager.config['vpns']:
+            del self.manager.config['vpns'][body]
+
+        self.manager.config.save()
+
+        path = os.path.join(
+            self.manager.config['data_path'],
+            'vpns',
+            body
+        )
+
+        if os.path.exists(path):
+            shutil.rmtree(path)
+
+        return body
 
     @isAutorized
     @api('pyovpn.vpn.detail')

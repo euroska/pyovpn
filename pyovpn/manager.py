@@ -96,5 +96,6 @@ class Manager(object):
         pass
 
     def notify(self, message):
-        print(message, flush=True)
+        pass
+        #print(message, flush=True)
 

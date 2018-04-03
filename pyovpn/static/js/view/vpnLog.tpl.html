@@ -5,4 +5,4 @@
 </ol>
 
 
-<pre><code ng-repeat="log in $ctrl.log" ng-bind="log"></code></pre>
+<pre><code ng-repeat="log in $ctrl.log track by $index" ng-bind="log"></code></pre>

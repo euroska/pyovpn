@@ -32,6 +32,12 @@
                 .catch(this.resetNewVpn.bind(this));
         };
 
+        vpnDelete(vpn) {
+            vpn.$delete().then(() => {
+                this.reload();
+            });
+        }
+
         $postLink() {
             return this.resetNewVpn.call(this);
         }

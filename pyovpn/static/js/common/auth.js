@@ -21,8 +21,14 @@
                 this.token = this.getToken();
                 this._loginDeferred = $q.defer();
 
-                if (this.token) this.emitToken();
-                else this.resolved = true;
+                $websocket.register('connect', body => {
+                    if (this.token) {
+                        this.emitToken();
+                    }
+                    else {
+                        this.resolved = true;
+                    }
+                });
 
                 $websocket.register('pyovpn.current', body => {
                     this.logged = body.is_anonymouse === false;

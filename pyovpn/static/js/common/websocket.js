@@ -35,6 +35,12 @@
 
             onopen() {
                 this.$opened = true;
+                let msg = 'connect';
+                if(msg in this.callbacks) {
+                    for (let callback of this.callbacks[msg]) {
+                        callback();
+                    }
+                }
                 $log.info(`$websocket- oAuth token: token`);
                 return this;
             }
@@ -88,6 +94,12 @@
 
             onclose() {
                 this.$opened = false;
+                let msg = 'close';
+                if(msg in this.callbacks) {
+                    for (let callback of this.callbacks[msg]) {
+                        callback();
+                    }
+                }
                 if (!this.timer && self.reconnectDelay) {
                     this.timer = setTimeout(this.connect.bind(this), self.reconnectDelay);
                 } else if (!self.reconnectDelay) {
