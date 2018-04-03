@@ -5,6 +5,22 @@
 <h1>VPN {{ $ctrl.vpn.name }}</h1>
 <p ng-bind="$ctrl.vpn.description"></p>
 
+<p>
+    <a ui-sref="pyovpn.vpnLog($ctrl.vpn)">Log</a>
+</p>
+
+<button ng-if="!$ctrl.vpn.running" type="button" class="btn btn-success" ng-click="$ctrl.vpn.$start()">
+    start
+</button>
+<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-primary" ng-click="$ctrl.vpn.$reload()">
+    reload
+</button>
+<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-danger" ng-click="$ctrl.vpn.$stop()">
+    stop
+</button>
+<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-dark" ng-click="$ctrl.vpn.$kill()">
+    kill
+</button>
 <table class="table table-sm table-striped">
     <thead>
         <tr>
@@ -27,9 +43,9 @@
         </tr>
     </tbody>
 </table>
-<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">Server template</a>
-<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">Server config</a>
-<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">User template</a>
+<a ui-sref="pyovpn.vpnTemplate($ctrl.vpn)" class="btn btn-primary">Server template</a>
+<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)" class="btn btn-danger">Server config</a>
+<a ui-sref="pyovpn.vpnTemplateUser($ctrl.vpn)" class="btn btn-warning">User template</a>
 
 <h2>Users</h2>
 <input ng-model="filter" class="w-100" />
@@ -56,9 +72,9 @@
             <td ng-bind="user.ip"></td>
             <td><span class="badge badge-pill" ng-class="user.active ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="user.active"></span></td>
             <td class="text-right">
-                <button ng-if="user.present" type="button" class="btn btn-sm btn-primary" style="width: 50px;" ng-click="$ctrl.config(user.username)">
+                <a ng-if="user.present" ui-sref="pyovpn.vpnConfigUser({name: $ctrl.vpn.name, username: user.username})" class="btn btn-sm btn-primary" style="width: 50px;">
                     Config
-                </button>
+                </a>
                 <button ng-if="user.present" type="button" class="btn btn-sm btn-dark" style="width: 50px;" ng-click="$ctrl.renew(user.username)">
                     renew
                 </button>

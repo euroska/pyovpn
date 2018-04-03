@@ -13,7 +13,7 @@
         class TemplateUserRepository {
             constructor() {
                 $websocket.register('pyovpn.template.user.detail', this.set.bind(this));
-                $websocket.register('pyovpn.template.user.del', this.del.bind(this));
+                $websocket.register('pyovpn.template.user.del', this._del.bind(this));
             }
 
             get(name) {
@@ -35,10 +35,14 @@
                 return $websocket.emit({message: 'pyovpn.template.user.set', body: {name, template}}).then(body => $templateUserDict[body.name]);
             }
 
-            del(name) {
-                if (body.name in $userDict) {
-                    delete $userDict[body.name];
+            _del(name) {
+                if (name in $templateUserDict) {
+                    delete $templateUserDict[name];
                 }
+            }
+
+            del(name) {
+                return $websocket.emit({message: 'pyovpn.template.user.del', body: name});
             }
 
             list(params) {

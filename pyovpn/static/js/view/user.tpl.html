@@ -66,7 +66,7 @@
 
             <td><span class="badge badge-pill" ng-class="vpn.active ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="vpn.active"></span></td>
             <td class="text-right">
-                <button ng-if="vpn.present" type="button" class="btn btn-sm btn-primary" style="width: 50px;" ng-click="$ctrl.config(vpn.name, vpn.username)">
+                <button ng-if="vpn.present" ui-sref="pyovpn.vpnConfigUser({name: vpn.name, username: $ctrl.user.username})" type="button" class="btn btn-sm btn-primary" style="width: 50px;">
                     Config
                 </button>
                 <button ng-if="vpn.present" type="button" class="btn btn-sm btn-dark" style="width: 50px;" ng-click="$ctrl.renew(vpn.name, vpn.username)">

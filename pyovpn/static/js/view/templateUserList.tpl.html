@@ -1,7 +1,43 @@
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">User templates</li>
+</ol>
+
 <h2>Template user list</h2>
 
-<ul>
-    <li ng-repeat="(name, template) in $ctrl.templateList">
-        <a ui-sref="pyovpn.templateUser({name: name})" ng-bind="name"></a>
-    </li>
-</ul>
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="text-right">Actions</th>
+        </tr>
+    </thead>
+
+    <tr ng-repeat="(name, template) in $ctrl.templateList">
+        <td><a ui-sref="pyovpn.templateUser({name: name})" ng-bind="name"></a></td>
+        <td class="text-right">
+            <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.del(name)">
+                <i class="fas fa-times"></i>
+            </button>
+        </td>
+    </tr>
+</table>
+
+<form name="$ctrl.templateAddForm" ng-submit="$ctrl.add()" autocomplete="off">
+    <fieldset>
+        <legend class="h5">Add template</legend>
+
+        <div class="form-inline">
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="input-icon-user"><i class="fas fa-edit"></i></span>
+                </div>
+                <input type="text" class="form-control" placeholder="name" aria-label="name" aria-describedby="input-icon-user" autocomplete="nope" ng-model="$ctrl.name"
+                    required>
+            </div>
+
+            <div class="col"></div>
+
+            <button type="submit" class="btn btn-primary" ng-disabled="!$ctrl.templateAddForm.$valid">Add user template</button>
+        </div>
+    </fieldset>
+</form>

@@ -68,7 +68,7 @@ class Config(object):
 
     def generateStructure(self):
         paths = [
-            '/templates/client',
+            '/templates/user',
             '/templates/server',
             '/tokens',
             '/vpns'

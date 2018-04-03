@@ -16,6 +16,10 @@
             'pyovpn.dashboard',
             'pyovpn.vpn',
             'pyovpn.vpnconfig',
+            'pyovpn.vpnconfiguser',
+            'pyovpn.vpntemplate',
+            'pyovpn.vpntemplateuser',
+            'pyovpn.vpnlog',
             'pyovpn.vpnlist',
             'pyovpn.user',
             'pyovpn.userlist',
@@ -100,6 +104,42 @@
                 url: 'vpnConfig/:name',
                 views: {
                     main: 'vpnConfig',
+                },
+                resolve: {
+                    vpn: ($stateParams, $vpn) => $vpn.get($stateParams.name)
+                }
+            })
+            .state('pyovpn.vpnConfigUser', {
+                url: 'vpnConfigUser/:name/:username',
+                views: {
+                    main: 'vpnConfigUser',
+                },
+                resolve: {
+                    vpn: ($stateParams, $vpn) => $vpn.get($stateParams.name)
+                }
+            })
+            .state('pyovpn.vpnTemplate', {
+                url: 'vpnTemplate/:name',
+                views: {
+                    main: 'vpnTemplate',
+                },
+                resolve: {
+                    vpn: ($stateParams, $vpn) => $vpn.get($stateParams.name)
+                }
+            })
+            .state('pyovpn.vpnTemplateUser', {
+                url: 'vpnTemplateUser/:name',
+                views: {
+                    main: 'vpnTemplateUser',
+                },
+                resolve: {
+                    vpn: ($stateParams, $vpn) => $vpn.get($stateParams.name)
+                }
+            })
+            .state('pyovpn.vpnLog', {
+                url: 'vpnLog/:name',
+                views: {
+                    main: 'vpnLog',
                 },
                 resolve: {
                     vpn: ($stateParams, $vpn) => $vpn.get($stateParams.name)

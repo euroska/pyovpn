@@ -152,7 +152,10 @@ class VpnApi(object):
         }
 
     @isAdmin
-    @api('pyovpn.vpn.start')
+    @api(
+        'pyovpn.vpn.start',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnStart(self, body, user):
         if body['name'] not in self.manager.vpns:
             raise VpnDoesNotExist()
@@ -163,7 +166,24 @@ class VpnApi(object):
         return vpn.serializeAdmin()
 
     @isAdmin
-    @api('pyovpn.vpn.stop')
+    @api(
+        'pyovpn.vpn.reload',
+        message_out='pyovpn.vpn.detail'
+    )
+    async def vpnReload(self, body, user):
+        if body['name'] not in self.manager.vpns:
+            raise VpnDoesNotExist()
+
+        vpn = self.manager.vpns[body['name']]
+        vpn.reload()
+
+        return vpn.serializeAdmin()
+
+    @isAdmin
+    @api(
+        'pyovpn.vpn.stop',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnStop(self, body, user):
         if body['name'] not in self.manager.vpns:
             raise VpnDoesNotExist()
@@ -173,7 +193,10 @@ class VpnApi(object):
         return vpn.serializeAdmin()
 
     @isAdmin
-    @api('pyovpn.vpn.kill')
+    @api(
+        'pyovpn.vpn.kill',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnKill(self, body, user):
         if body['name'] not in self.manager.vpns:
             raise VpnDoesNotExist()

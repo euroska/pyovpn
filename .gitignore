@@ -3,6 +3,6 @@
 __pycache__
 *.pyc
 .kdev4
+*.egg-info
 *.kdev4
-
 *.yml

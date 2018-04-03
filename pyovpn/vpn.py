@@ -40,6 +40,9 @@ class VPN(object):
             'server_key_path': os.path.join(root, 'keys', 'server.key'),
             'server_csr_path': os.path.join(root, 'csrs', 'server.csr'),
             'server_cert_path': os.path.join(root, 'certs', 'server.pem'),
+
+            'ipp_path': os.path.join(root, 'ipp.txt'),
+            'status_path': os.path.join(root, 'status.txt'),
         }
 
     @staticmethod

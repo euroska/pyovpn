@@ -1,6 +1,13 @@
-<h1>Config of {{ $ctrl.vpn.name }}</h1>
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnList">VPNs</a></li>
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnDetail($ctrl.vpn)" ng-bind="$ctrl.vpn.name"></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Template</li>
+</ol>
 
-<textarea class="w-100" rows="20" ng-model="$ctrl.config" />
+<h1>Template of {{ $ctrl.vpn.name }}</h1>
+
+<textarea class="w-100" rows="20" ng-model="$ctrl.template" />
 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
-
+<br />
+<a class="btn btn-sm btn-primary m-1" ng-repeat="(name, data) in $ctrl.templates" ng-click="$ctrl.template = data" ng-bind="name"></a>
 

@@ -82,6 +82,55 @@
                 }).then(message => message.body.config);
             }
 
+            $template() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.template',
+                    body: {
+                        name: this.name
+                    }
+                }).then(message => message.body.template);
+            }
+
+            $templateSet(template, regenerate=true) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.template.set',
+                    body: {
+                        name: this.name,
+                        template: template,
+                        regenerate: regenerate
+                    }
+                }).then(message => message.body.template);
+            }
+
+            $templateUser() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.template',
+                    body: {
+                        name: this.name
+                    }
+                }).then(message => message.body.template);
+            }
+
+            $templateUserSet(template) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.template.set',
+                    body: {
+                        name: this.name,
+                        template: template
+                    }
+                }).then(message => message.body.template);
+            }
+
+            $configUser(username) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.config',
+                    body: {
+                        name: this.name,
+                        username: username
+                    }
+                }).then(message => message.body.config);
+            }
+
             $serialize() {
                 return {
                     name: this.name,
@@ -89,6 +138,51 @@
                     autostart: this.autostart,
                     subject: this.subject
                 };
+            }
+
+            $start() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.start',
+                    body: {
+                        name: this.name,
+                    }
+                });
+            }
+
+            $reload() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.reload',
+                    body: {
+                        name: this.name,
+                    }
+                });
+            }
+
+            $stop() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.stop',
+                    body: {
+                        name: this.name,
+                    }
+                });
+            }
+
+            $kill() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.kill',
+                    body: {
+                        name: this.name,
+                    }
+                });
+            }
+
+            $log() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.log',
+                    body: {
+                        name: this.name,
+                    }
+                }).then(message => message.body.log);
             }
         }
 

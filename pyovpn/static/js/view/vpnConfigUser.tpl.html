@@ -1,0 +1,8 @@
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnList">VPNs</a></li>
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnDetail($ctrl.vpn)" ng-bind="$ctrl.vpn.name"></a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ $ctrl.username }} config</li>
+</ol>
+
+<pre class="bg-success text-white"><code ng-bind="$ctrl.config"></code></pre>
+<a type="button" class="btn btn-secondary" download="{{ $ctrl.username }}.ovpn" ng-href="{{ $ctrl.download() }}">Download</a>

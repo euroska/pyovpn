@@ -1,3 +1,9 @@
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnList">VPNs</a></li>
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnDetail($ctrl.vpn)" ng-bind="$ctrl.vpn.name"></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Config</li>
+</ol>
+
 <h1>Config of {{ $ctrl.vpn.name }}</h1>
 
 <textarea class="w-100" rows="20" ng-model="$ctrl.config" />
