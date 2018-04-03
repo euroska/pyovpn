@@ -23,10 +23,10 @@ def normalizeConfig(config):
     config['sequence_path'] = config.get('sequence_path', '')
 
 
-def normalizeSubject(subject):
-    subject['cn'] = subject.get('cn', 'Test CA')
-    subject['o'] = subject.get('o', 'Test organization')
-    subject['ou'] = subject.get('ou', 'Test unit')
+def normalizeSubject(subject, default={}):
+    subject['cn'] = subject.get('cn', default.get('cn', 'Test CA'))
+    subject['o'] = subject.get('o', default.get('o', 'Test organization'))
+    subject['ou'] = subject.get('ou', default.get('ou', 'Test unit'))
 
 
 def serializeKeyPem(key, password=None, str=False):

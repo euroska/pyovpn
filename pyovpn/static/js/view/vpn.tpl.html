@@ -2,5 +2,75 @@
     <li class="breadcrumb-item"><a ui-sref="pyovpn.vpnList">VPNs</a></li>
     <li class="breadcrumb-item active" aria-current="page">VPN detail</li>
 </ol>
+<h1>VPN {{ $ctrl.vpn.name }}</h1>
+<p ng-bind="$ctrl.vpn.description"></p>
 
-{{ $ctrl }}
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Autostart</th>
+            <th>Running</th>
+            <th>Common name</th>
+            <th>Organization name</th>
+            <th>Organization unit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><span class="badge badge-pill" ng-class="$ctrl.vpn.autostart ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="$ctrl.vpn.autostart"></span></td>
+
+            <td><span class="badge badge-pill" ng-class="$ctrl.vpn.running ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="$ctrl.vpn.running"></span></td>
+
+            <td ng-bind="$ctrl.vpn.subject.cn"></td>
+            <td ng-bind="$ctrl.vpn.subject.o"></td>
+            <td ng-bind="$ctrl.vpn.subject.ou"></td>
+        </tr>
+    </tbody>
+</table>
+<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">Server template</a>
+<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">Server config</a>
+<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)">User template</a>
+
+<h2>Users</h2>
+<input ng-model="filter" class="w-100" />
+
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th class="text-left">Username</th>
+            <th class="text-left">Enabled</th>
+            <th class="text-left">IP</th>
+            <th class="text-left">Active</th>
+            <th class="text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="user in $ctrl.userList|filter:filter|orderBy:['-present', 'active', 'username']">
+            <td><a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a></td>
+            <td>
+                <span class="badge badge-pill" ng-class="user.present ? { 'badge-success': true } : { 'badge-danger': true }">
+                {{ user.present }}
+                </span>
+            </td>
+
+            <td ng-bind="user.ip"></td>
+            <td><span class="badge badge-pill" ng-class="user.active ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="user.active"></span></td>
+            <td class="text-right">
+                <button ng-if="user.present" type="button" class="btn btn-sm btn-primary" style="width: 50px;" ng-click="$ctrl.config(user.username)">
+                    Config
+                </button>
+                <button ng-if="user.present" type="button" class="btn btn-sm btn-dark" style="width: 50px;" ng-click="$ctrl.renew(user.username)">
+                    renew
+                </button>
+                <button ng-if="user.present" type="button" class="btn btn-sm btn-danger" style="width: 50px;" ng-click="$ctrl.revoke(user.username)">
+                    revoke
+                </button>
+                <button ng-if="!user.present" type="button" class="btn btn-sm btn-primary" style="width: 40px;" ng-click="$ctrl.add(user.username)">
+                    add
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- {{ $ctrl }} -->

@@ -1,4 +1,8 @@
+import logging
 from aiohttp.web import json_response
+
+
+logger = logging.getLogger(__name__)
 
 
 class JsonRPC(object):
@@ -12,10 +16,11 @@ class JsonRPC(object):
 
         message = data.get('message', '')
         body = data.get('body')
-
-        username = await self.manager.checkToken(
-            request.headers.get('X-Token', '_')
+        token = request.headers.get('X-Token', '_')
+        username = await self.manager.auth.checkToken(
+            token
         )
+
         if username in self.manager.config['users']:
             user = self.manager.config['users'][username]
 

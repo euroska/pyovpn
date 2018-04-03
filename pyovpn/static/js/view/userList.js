@@ -1,26 +1,46 @@
 (function () {
     'use strict';
 
-    angular.module(
-        'pyovpn.userlist', []
-    )
-    .component('userList', {
-        templateUrl: '/js/view/userList.tpl.html',
-        controller: ['$log', '$auth', '$user', '$userDict', UserListController],
-    //     controllAs: 'ctrl'
-        bindings: {
+    class UserListController {
+
+        constructor($log, $auth, $user, $userDict) {
+            this.$log = $log;
+            this.$auth = $auth;
+            this.$user = $user;
+            this.$userDict = $userDict;
         }
-    });
 
-    function UserListController($log, $auth, $user, $userDict) {
+        $onInit() {
+            this.reload();
+        }
 
-        this.userList = $userDict;
+        reload() {
+            this.userList = [];
+            for(let username in this.$userDict) {
+                this.userList.push(this.$userDict[username]);
+            }
+        }
 
-        this.userAdd = () => $user.add(this.new_user).then(resetNewUser.bind(this));
-        this.userDelete = user => confirm("Are you sure?") && user.$delete();
-        this.$postLink = () => resetNewUser.call(this);
+        userAdd() {
+            return this.$user.add(this.new_user).then(() => {
+                this.resetNewUser();
+                this.reload();
+            });
+        }
 
-        function resetNewUser() {
+        userDelete(user) {
+            if(confirm("Are you sure?")) {
+                user.$delete().then(() => {
+                    this.reload();
+                });
+            }
+        }
+
+        $postLink() {
+            this.resetNewUser.call(this);
+        }
+
+        resetNewUser() {
             this.userAddForm.$setUntouched();
             this.userAddForm.$setPristine();
             this.new_user = {
@@ -29,4 +49,15 @@
             };
         }
     }
+
+    angular.module(
+        'pyovpn.userlist', []
+    )
+    .component('userList', {
+        templateUrl: '/js/view/userList.tpl.html',
+        controller: UserListController,
+        bindings: {
+            users: '='
+        }
+    });
 }());

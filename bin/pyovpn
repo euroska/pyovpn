@@ -2,16 +2,14 @@
 import sys
 import logging
 import argparse
-from pyovpn.manager import Manager
-from pyovpn.config import Config
 
 parser = argparse.ArgumentParser(
     description='PyOVP',
     epilog='Send me report ;)'
 )
 parser.add_argument('-c', '--config', default='/etc/pyovpn/pyovpn.yaml', help='Config file destination')
-parser.add_argument('-l', '--logfile', default='/var/log/pyovpn.log', help='Log file')
-parser.add_argument('-L', '--loglevel', default=logging.INFO, type=int, help='Log level')
+parser.add_argument('-l', '--logfile', default=None, help='Log file')
+parser.add_argument('-L', '--loglevel', default=logging.DEBUG, type=int, help='Log level')
 
 args = parser.parse_args()
 
@@ -20,6 +18,10 @@ if args.logfile:
     logging.basicConfig(filename=args.logfile,level=args.loglevel)
 else:
     logging.basicConfig(stream=sys.stdout, level=args.loglevel)
+
+
+from pyovpn.manager import Manager
+from pyovpn.config import Config
 
 config = Config.load(args.config)
 manager = Manager(config)

@@ -2,6 +2,9 @@
     <li class="breadcrumb-item active" aria-current="page">VPNs</li>
 </ol>
 
+<h1>VPNs</h1>
+<input ng-model="filter" class="w-100" />
+
 <table class="table table-sm table-striped">
     <thead>
         <tr>
@@ -9,11 +12,12 @@
             <th class="text-center">Autostart</th>
             <th class="text-center">Running</th>
             <th>Users</th>
+            <th class="text-right">Actions</th>
         </tr>
     </thead>
 
     <tbody>
-        <tr ng-repeat="vpn in $ctrl.vpnList">
+        <tr ng-repeat="vpn in $ctrl.vpnList|filter:filter|orderBy:['name']">
             <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
 
             <td class="text-center">
@@ -23,7 +27,12 @@
                 <span class="badge badge-pill" ng-class="vpn.running ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="vpn.running"></span>
             </td>
             <td>
-                <span class="badge badge-pill badge-info" ng-repeat="user in vpn.users" ng-bind="user"></span>
+                <span class="badge badge-pill badge-info" ng-repeat="(username, data) in vpn.users" ng-bind="username"></span>
+            </td>
+            <td class="text-right">
+                <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.vpnDelete(vpn)">
+                    <i class="fas fa-times"></i>
+                </button>
             </td>
         </tr>
     </tbody>

@@ -29,31 +29,14 @@ class VpnApi(object):
             body['user'] = user['username']
 
         vpns = []
-        u = body.get('user', False)
-        if u:
-            vpns = [vpn.serializeList() for vpn in self.manager.vpns.values() if vpn.hasUser(u)]
+        user = body.get('username', False)
+        if user:
+            vpns = [vpn.serializeUser(user) for vpn in self.manager.vpns.values() if vpn.hasUser(user)]
 
         else:
-            vpns = [vpn.serializeList() for vpn in self.manager.vpns.values()]
+            vpns = [vpn.serializeAdmin() for vpn in self.manager.vpns.values()]
 
         return vpns
-
-    @isAdmin
-    @api(
-        'pyovpn.vpn.add',
-        message_out='pyovpn.vpn.detail'
-    )
-    async def vpnAdd(self, body, user):
-        name = body['name']
-        if name in self.manager.config['vpns']:
-            raise VpnExists()
-
-        vpn = VPN.inicialize(
-            self.manager,
-            name,
-            subject=body['subject']
-        )
-        return vpn.serializeDetail()
 
     @isAdmin
     @api('pyovpn.vpn.del')
@@ -65,12 +48,51 @@ class VpnApi(object):
     async def vpnDetail(self, body, user):
         if body in self.manager.vpns:
             vpn = self.manager.vpns[body]
-            return vpn.serializeDetail()
+            if user['is_admin']:
+                return vpn.serializeAdmin()
+            return vpn.serializeUser()
 
     @isAdmin
-    @api('pyovpn.vpn.set')
+    @api(
+        'pyovpn.vpn.set',
+        schema_in={
+            'title': 'Vpn set message',
+            'type': 'object',
+            'required': ['name'],
+            'properties': {
+                'name': {'type': 'string'},
+                'autostart': {'type': 'boolean'},
+                'subject': {
+                    'type': 'object',
+                    'properties': {
+                        'cn': {'type': 'string'},
+                        'o': {'type': 'string'},
+                        'ou': {'type': 'string'},
+                    },
+                }
+            }
+        },
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnSet(self, body, user):
-        pass
+        vpn = None
+        if body['name'] in self.manager.vpns:
+            vpn = self.manager.vpns[body]
+            vpn.autostart = body['autostart']
+            vpn.save()
+        else:
+            name = body['name']
+            vpn = VPN.inicialize(
+                self.manager,
+                name,
+                autostart=body.get('autostart', False),
+                subject=body.get('subject', {})
+            )
+
+        if body.get('autostart', False) and not vpn.running:
+            vpn.start()
+
+        return vpn.serializeAdmin()
 
     @isAdmin
     @api('pyovpn.vpn.template')
@@ -104,6 +126,7 @@ class VpnApi(object):
             'template': vpn.serverTemplateGet()
         }
 
+    @isAdmin
     @api('pyovpn.vpn.config')
     async def vpnConfigGet(self, body, user):
         if body['name'] not in self.manager.vpns:
@@ -115,6 +138,7 @@ class VpnApi(object):
             'config': vpn.configGet(),
         }
 
+    @isAdmin
     @api('pyovpn.vpn.config.set', {})
     async def vpnConfigSet(self, body, user):
         if body['name'] not in self.manager.vpns:
@@ -135,7 +159,8 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.start()
-        return vpn.serializeDetail()
+
+        return vpn.serializeAdmin()
 
     @isAdmin
     @api('pyovpn.vpn.stop')
@@ -145,7 +170,7 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.stop()
-        return vpn.serializeDetail()
+        return vpn.serializeAdmin()
 
     @isAdmin
     @api('pyovpn.vpn.kill')
@@ -155,7 +180,7 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.kill()
-        return vpn.serializeDetail()
+        return vpn.serializeAdmin()
 
     @isAdmin
     @api('pyovpn.vpn.log')
@@ -169,7 +194,10 @@ class VpnApi(object):
         }
 
     @isAdmin
-    @api('pyovpn.vpn.user.add', message_out='pyovpn.vpn.detail')
+    @api(
+        'pyovpn.vpn.user.add',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnUserAdd(self, body, user):
         # TODO user is not admin
         if body['name'] not in self.manager.vpns:
@@ -177,10 +205,13 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.cnAdd(body['username'])
-        return vpn.serializeDetail()
+        return vpn.serializeAdmin()
 
     @isAutorized
-    @api('pyovpn.vpn.user.revoke')
+    @api(
+        'pyovpn.vpn.user.revoke',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnUserRevoke(self, body, user):
         # TODO user is not admin
         if body['name'] not in self.manager.vpns:
@@ -188,10 +219,16 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.cnRevoke(body['username'])
-        return vpn.serializeDetail()
+
+        if user['is_admin']:
+            return vpn.serializeAdmin()
+        return vpn.serializeUser(user['username'])
 
     @isAutorized
-    @api('pyovpn.vpn.user.renew')
+    @api(
+        'pyovpn.vpn.user.renew',
+        message_out='pyovpn.vpn.detail'
+    )
     async def vpnUserRenew(self, body, user):
         # TODO user is not admin
         if body['name'] not in self.manager.vpns:
@@ -199,8 +236,12 @@ class VpnApi(object):
 
         vpn = self.manager.vpns[body['name']]
         vpn.cnRenew(body['username'])
-        return vpn.serializeDetail()
 
+        if user['is_admin']:
+            return vpn.serializeAdmin()
+        return vpn.serializeUser(user['username'])
+
+    @isAdmin
     @api('pyovpn.vpn.user.template')
     async def vpnUserTemplateGet(self, body, user):
         if body['name'] not in self.manager.vpns:
@@ -212,6 +253,7 @@ class VpnApi(object):
             'template': vpn.userTemplateGet(),
         }
 
+    @isAdmin
     @api(
         'pyovpn.vpn.user.template.set',
         message_out='pyovpn.vpn.user.template'
@@ -227,6 +269,7 @@ class VpnApi(object):
             'template': vpn.userTemplateGet(),
         }
 
+    @isAutorized
     @api(
         'pyovpn.vpn.user.config'
     )

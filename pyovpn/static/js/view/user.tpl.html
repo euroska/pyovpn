@@ -3,30 +3,85 @@
     <li class="breadcrumb-item active" aria-current="page" ng-bind="$ctrl.user.username">User</li>
 </ol>
 
+<h2>User {{ $ctrl.user.username }}</h2>
 <form name="userForm" ng-submit="$ctrl.update()">
-    <p class="form-group">
-        <label for="username" class="form-control-label">User name</label>
-        <input name="username" id="username" type="text" class="form-control"
-            ng-model="$ctrl.user.username"
-            ng-class="{ 'is-invalid': userForm.username.$invalid }"
-            required>
-    </p>
-    <p class="form-check">
-        <input type="checkbox" id="is_admin" class="form-check-input" ng-model="$ctrl.user.is_admin">
-        <label for="is_admin" class="form-check-label">Is admin</label>
-    </p>
-    <p>
-        <span class="badge badge-pill badge-info" ng-repeat="vpn in $ctrl.user.vpns" ng-bind="vpn"></span>
-    </p>
-
     <p class="text-warning" ng-if="$ctrl.user.is_anonymouse">
         User is anonymouse
     </p>
 
+    <p class="form-check">
+        <input type="checkbox" id="is_admin" class="form-check-input" ng-model="$ctrl.user.is_admin">
+        <label for="is_admin" class="form-check-label">Is admin</label>
+    </p>
+    <p class="form-check">
+        <input type="checkbox" id="is_anonymouse" class="form-check-input" ng-model="$ctrl.user.is_anonymouse">
+        <label for="is_anonymouse" class="form-check-label">Is anonymouse</label>
+    </p>
+    <p>
+        <span class="badge badge-pill badge-info" ng-repeat="vpn in $ctrl.user.vpns" ng-bind="vpn"></span>
+    </p>
     <p class="text-right">
         <button type="button" class="btn btn-outline-secondary" ng-click="$ctrl.reset()">Cancel</button>
         <button type="submit" class="btn btn-primary ml-2">Save</button>
     </p>
 </form>
 
+<h2>Password</h2>
+<form name="userForm" ng-submit="$ctrl.password(password)">
+    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="input-icon-password"><i class="fas fa-key"></i></span>
+        </div>
+        <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="input-icon-password" autocomplete="new-password" ng-model="password"
+                    required>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Set password</button>
+        </div>
+    </div>
+</form>
+
+
+<h2>VPNs</h2>
+<input ng-model="filter" class="w-100" />
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="text-left">Runnig</th>
+            <th class="text-left">IP</th>
+            <th class="text-left">Online</th>
+            <th class="text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="vpn in $ctrl.vpnList|filter:filter|orderBy:['-present', '-running', 'username']">
+            <td><a ui-sref="pyovpn.vpnDetail(vpn)" ng-bind="vpn.name"></a></td>
+            <td>
+                <span class="badge badge-pill" ng-class="vpn.present ? { 'badge-success': true } : { 'badge-danger': true }">
+                {{ vpn.present }}
+                </span>
+            </td>
+
+            <td ng-bind="vpn.ip"></td>
+
+            <td><span class="badge badge-pill" ng-class="vpn.active ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="vpn.active"></span></td>
+            <td class="text-right">
+                <button ng-if="vpn.present" type="button" class="btn btn-sm btn-primary" style="width: 50px;" ng-click="$ctrl.config(vpn.name, vpn.username)">
+                    Config
+                </button>
+                <button ng-if="vpn.present" type="button" class="btn btn-sm btn-dark" style="width: 50px;" ng-click="$ctrl.renew(vpn.name, vpn.username)">
+                    renew
+                </button>
+                <button ng-if="vpn.present" type="button" class="btn btn-sm btn-danger" style="width: 50px;" ng-click="$ctrl.revoke(vpn.name, vpn.username)">
+                    revoke
+                </button>
+                <button ng-if="!vpn.present" type="button" class="btn btn-sm btn-primary" style="width: 40px;" ng-click="$ctrl.add(vpn.name, vpn.username)">
+                    add
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</table>
 <pre><code>{{ $ctrl.user | json }}</code></pre>
+<pre><code>{{ $ctrl.vpnList | json }}</code></pre>

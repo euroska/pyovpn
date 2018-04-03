@@ -10,57 +10,29 @@
 
     function TemplateUserFactory($log, $q, $websocket, $templateUserDict) {
 
-        class TemplateUser {
-            constructor(data) {
-                this.$update(data);
+        class TemplateUserRepository {
+            constructor() {
+                $websocket.register('pyovpn.template.user.detail', this.set.bind(this));
+                $websocket.register('pyovpn.template.user.del', this.del.bind(this));
             }
 
-            $save(data) {
-                if (typeof data === 'undefined') {
-                    data = this.$serialize();
-                } else {
-                    this.$update(data);
+            get(name) {
+                if(name in $templateUserDict) {
+                    return $q.resolve($templateUserDict[name])
                 }
 
-                return $websocket.emit({message: 'pyovpn.template.user.set', body: data}).then(data => {
-                    this.$update(data);
-                    return this;
+                return this.list().then(() => {
+                    return $templateUserDict[name];
                 });
             }
 
-            $delete() {
-                return $websocket.emit({message: 'pyovpn.template.user.del', body: this.name});
+            set(body) {
+                $templateUserDict[body.name] = body.template;
+                return body.template;
             }
 
-
-            $update(data) {
-                this.$original = data;
-                angular.extend(this, data);
-            }
-
-            $reset() {
-                this.$update(this.$original);
-            }
-
-            $serialize() {
-                return {
-                };
-            }
-        }
-
-        class TemplateUserRepository {
-            constructor() {
-                this.templateUser = TemplateUser;
-                $websocket.register('pyovpn.template.user.detail', this.set.bind(this));
-                $websocket.register('pyovpn.template.del', this.del.bind(this));
-            }
-
-            set(name, template) {
+            add(name, template) {
                 return $websocket.emit({message: 'pyovpn.template.user.set', body: {name, template}}).then(body => $templateUserDict[body.name]);
-            }
-
-            update(body) {
-
             }
 
             del(name) {
@@ -69,7 +41,7 @@
                 }
             }
 
-        list(params) {
+            list(params) {
                 if (typeof params === 'undefined') {
                     params = {};
                 }
@@ -77,12 +49,11 @@
                 return $websocket.emit({message: 'pyovpn.template.user.list', body: params}).then(message => {
                     angular.extend($templateUserDict, message.body);
                     return $templateUserDict;
-                });
+                })
             }
         }
 
         return new TemplateUserRepository();
     }
+
 }());
-
-

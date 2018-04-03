@@ -1,1 +1,9 @@
-{{ $ctrl }}
+<ol id="top-nav" class="breadcrumb">
+    <li class="breadcrumb-item"><a ui-sref="pyovpn.userList">Server templates</a></li>
+    <li class="breadcrumb-item active" aria-current="page" ng-bind="$ctrl.name">template</li>
+</ol>
+
+<h1>Template detail {{ $ctrl.name }}</h1>
+
+<textarea class="w-100" rows="20" ng-model="$ctrl.template" />
+<button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>

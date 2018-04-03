@@ -4,14 +4,15 @@
     angular.module(
         'pyovpn.templateuserlist', []
     )
-    .component('templateUSerList', {
+    .component('templateUserList', {
         templateUrl: '/js/view/templateUserList.tpl.html',
         controller: TemplateUserListController,
-    //     controllAs: 'ctrl'
         bindings: {
             templateList: '='
         }
     });
 
-    function TemplateUserListController($log, $auth) { }
+    function TemplateUserListController($log, $auth) {
+        this.test = 'koko2';
+    }
 }());

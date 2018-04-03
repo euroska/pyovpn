@@ -66,6 +66,7 @@ class UserApi(object):
             'properties': {
                 'username': {'type': 'string'},
                 'is_admin': {'type': 'boolean'},
+                'is_anonymouse': {'type': 'boolean'},
                 'password': {'type': 'string'},
             }
         },
@@ -78,11 +79,11 @@ class UserApi(object):
         username = body['username']
         new_user = {
             'username': username,
-            'password': self.manager.hashPassword(body['password']),
-            'is_admin': body['is_admin'],
-            'is_anonymouse': False,
-            'vpns': [],
+            'password': self.manager.auth.hashPassword(body['password']),
+            'is_admin': body.get('is_admin', False),
+            'is_anonymouse': body.get('is_anonymouse', False),
         }
+
         self.manager.config['users'][username] = new_user
         self.manager.config.save()
         return body
@@ -95,7 +96,10 @@ class UserApi(object):
 
         del self.manager.config['users'][body]
 
-        # todo vpns
+        for vpn in self.manager.vpns.values():
+            if vpn.hasUser(body):
+                vpn.cnRevoke(body)
+
         self.manager.config.save()
         return body
 
@@ -152,5 +156,5 @@ class UserApi(object):
             username = body['username']
 
         user = self.manager.config['users'][username]
-        user['password'] = self.manager.hashPassword(body['password'])
+        user['password'] = self.manager.auth.hashPassword(body['password'])
         self.manager.config.save()

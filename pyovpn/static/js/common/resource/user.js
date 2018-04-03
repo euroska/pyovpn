@@ -32,6 +32,16 @@
                 return $websocket.emit({message: 'pyovpn.user.del', body: this.username});
             }
 
+            $setPassword(password) {
+                return $websocket.emit({
+                    message: 'pyovpn.user.password',
+                    body: {
+                        username: this.username,
+                        password: password
+                    }
+                });
+
+            }
 
             $update(data) {
                 this.$original = data;
@@ -63,7 +73,6 @@
                 return $websocket.emit(
                     {message: 'pyovpn.user.add', body: user}
                 ).then(message => {
-                    console.log(message.body);
                     return $userDict[message.body.username]
                 });
             }
@@ -93,7 +102,6 @@
                 }
 
                 return $websocket.emit({message: 'pyovpn.user.detail', body: name}).then(message => {
-                    console.log(message, $userDict);
                     return $userDict[message.body.username];
                 });
             }

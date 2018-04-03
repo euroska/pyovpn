@@ -1,10 +1,10 @@
 Metadata-Version: 1.0
 Name: pyovpn
 Version: 1.0
-Summary: Config for OpenVPN
+Summary: OpenVPN orchestrate util
 Home-page: https://github.com/euroska/pyovpn
-Author: Martin Miksanik
-Author-email: miksanik@gmail.com
+Author: Martin Miksanik, Jiri Peterek
+Author-email: miksanik@gmail.com, jiri.peterek@gmail.com
 License: UNKNOWN
 Description-Content-Type: UNKNOWN
 Description: UNKNOWN

@@ -1,1 +1,7 @@
-{{ $ctrl }}
+<h2>Template user list</h2>
+
+<ul>
+    <li ng-repeat="(name, template) in $ctrl.templateList">
+        <a ui-sref="pyovpn.templateUser({name: name})" ng-bind="name"></a>
+    </li>
+</ul>

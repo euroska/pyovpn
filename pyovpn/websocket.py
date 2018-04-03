@@ -27,7 +27,7 @@ class WebsocketClient(object):
             # custom messages
             if message == 'pyovpn.token':
                 self.token = body
-                username = await self.manager.checkToken(self.token)
+                username = await self.manager.auth.checkToken(self.token)
                 if username in self.manager.config['users']:
                     self.user = self.manager.config['users'][username]
 

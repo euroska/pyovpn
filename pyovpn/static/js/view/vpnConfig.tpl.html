@@ -1,0 +1,6 @@
+<h1>Config of {{ $ctrl.vpn.name }}</h1>
+
+<textarea class="w-100" rows="20" ng-model="$ctrl.config" />
+<button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+<button type="button" class="btn btn-secondary" ng-click="$ctrl.generate()">Generate</button>
+<a type="button" class="btn btn-secondary" download="config.ovpn" ng-href="{{ $ctrl.download() }}">Download</a>

@@ -1,14 +1,8 @@
-
 <ol id="top-nav" class="breadcrumb">
     <li class="breadcrumb-item active" aria-current="page">Users</li>
 </ol>
-<!--
-<label for="filter">Filter</label>
-<input ng-model="$ctrl.filter" id="filter"/>
-
-<br />
-<br />
--->
+<h1>Users</h1>
+<input ng-model="filter" class="w-100" />
 <table class="table table-sm table-striped">
     <thead>
         <tr>
@@ -21,15 +15,15 @@
     </thead>
 
     <tbody>
-        <tr ng-repeat="(username, user) in $ctrl.userList">
+        <tr ng-repeat="user in $ctrl.userList|filter:filter|orderBy:['username']">
             <td>
                 <a ui-sref="pyovpn.userDetail(user)" ng-bind="user.username"></a>
             </td>
             <td class="text-center">
-                <span class="badge badge-pill" ng-class="user.is_admin ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_admin"></span>
+                <span class="badge badge-pill" ng-class="user.is_admin ? { 'badge-danger': true } : { 'badge-success': true }" ng-bind="user.is_admin"></span>
             </td>
             <td class="text-center">
-                <span class="badge badge-pill" ng-class="user.is_anonymouse ? { 'badge-success': true } : { 'badge-danger': true }" ng-bind="user.is_anonymouse"></span>
+                <span class="badge badge-pill" ng-class="user.is_anonymouse ? { 'badge-success': true } : { 'badge-success': true }" ng-bind="user.is_anonymouse"></span>
             </td>
             <td>
                 <span class="badge badge-pill badge-info" ng-repeat="vpn in user.vpns" ng-bind="vpn"></span>
@@ -64,10 +58,24 @@
                     required>
             </div>
 
-            <div class="form-check mb-2 mr-sm-2 mb-sm-0">
-                <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_user.is_admin"> Is admin
-                </label>
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">Is admin</label>
+                </div>
+
+                <div class="input-group-text">
+                    <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_user.is_admin">
+                </div>
+            </div>
+
+            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">Is anonymouse</label>
+                </div>
+
+                <div class="input-group-text">
+                    <input class="form-check-input" type="checkbox" ng-model="$ctrl.new_user.is_anonymouse">
+                </div>
             </div>
 
             <div class="col"></div>
@@ -76,4 +84,3 @@
         </div>
     </fieldset>
 </form>
-

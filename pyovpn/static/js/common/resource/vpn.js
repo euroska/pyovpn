@@ -5,8 +5,8 @@
 
     angular.module(
         'pyovpn.resource.vpn', [])
-        .factory('$vpn', VpnFactory)
         .value('$vpnDict', {})
+        .factory('$vpn', VpnFactory)
 
     function VpnFactory($log, $q, $websocket, $vpnDict) {
 
@@ -42,8 +42,52 @@
                 this.$update(this.$original);
             }
 
+            $renew(username) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.renew',
+                    body: {name: this.name, username: username}
+                });
+            }
+
+            $revoke(username) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.revoke',
+                    body: {name: this.name, username: username}
+                });
+            }
+
+            $add(username) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.user.add',
+                    body: {name: this.name, username: username}
+                });
+            }
+
+            $config() {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.config',
+                    body: {
+                        name: this.name,
+                    }
+                }).then(message => message.body.config);
+            }
+
+            $configSet(config) {
+                return $websocket.emit({
+                    message: 'pyovpn.vpn.config.set',
+                    body: {
+                        name: this.name,
+                        config: config
+                    }
+                }).then(message => message.body.config);
+            }
+
             $serialize() {
                 return {
+                    name: this.name,
+                    description: this.description,
+                    autostart: this.autostart,
+                    subject: this.subject
                 };
             }
         }
@@ -56,7 +100,9 @@
             }
 
             add(vpn) {
-                return $websocket.emit({message: 'pyovpn.vpn.add', body: vpn}).then(message => $vpnDict[message.body.name]);
+                return $websocket.emit({message: 'pyovpn.vpn.set', body: vpn}).then(
+                    message => $vpnDict[message.body.name]
+                );
             }
 
             set(body) {

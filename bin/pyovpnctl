@@ -2,8 +2,19 @@
 import sys
 import logging
 import argparse
+from getpass import getpass
 from pyovpn.manager import Manager
 from pyovpn.config import Config
+
+
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 
 class PyOVPCtrl(object):
 
@@ -14,6 +25,7 @@ class PyOVPCtrl(object):
         )
         parser.add_argument('command', help="Subcommand to run")
         args = parser.parse_args(sys.argv[1:2])
+
         if not hasattr(self, args.command):
             parser.print_help()
             exit(1)
@@ -21,14 +33,96 @@ class PyOVPCtrl(object):
         getattr(self, args.command)()
 
     def generate(self):
+        '''
+        Generate config
+        '''
         parser = argparse.ArgumentParser(
             description='Generate basic config'
         )
-        parser.add_argument('-d', '--destination', default='/etc/pyovpn/pyovpn.yaml', help='Generate config to destination')
-        parser.add_argument('-s', --static', default='/var/lib/pyovpn', help='Set static path')
+        parser.add_argument('-d', '--data', default='/etc/pyovpn/data', help='Generate basic data structure')
+        parser.add_argument('-s', '--static', default=None, help='Set static path')
+        parser.add_argument('--save', default=False, help='Store config to')
+
+        args = parser.parse_args(sys.argv[2:])
+        config = Config.DEFAULT
+
+        if args.data:
+            config['data_path'] == args.data
+
+        if args.static:
+            config['static_path'] = args.static
+
+        if args.save:
+            with open(args.save, 'w') as f:
+                f.write(Config.generate(config))
+        else:
+            print(Config.generate(config))
 
     def collect(self):
         parser = argparse.ArgumentParser(
+            description='Copy statics to destinations'
+        )
+        parser.add_argument('-d', '--destination', help='Static destination path')
+
+    def inicialize(self):
+        pass
+
+    def adduser(self):
+        parser = parser = argparse.ArgumentParser(
             description='Generate basic config'
         )
-        parser.add_argument('-d', '--destination', default='/var/lib/pyovpn', help='Copy static to directory')
+        parser.add_argument('username', help="Username to add")
+        parser.add_argument('-c', '--config', default='/etc/pyovpn/config.yml', help='Generate password for user')
+        parser.add_argument("--admin", type=str2bool, nargs='?',
+                        const=True, default=False,
+                        help="Active admin account")
+        parser.add_argument("--anonymouse", type=str2bool, nargs='?',
+                        const=True, default=False,
+                        help="User is anonymouse")
+        args = parser.parse_args(sys.argv[2:])
+
+        config = Config.load(args.config)
+        if args.username in config['users']:
+            print('Username already exists')
+            sys.exit(1)
+
+        manager = Manager(config)
+        password = getpass('Enter new password for user: %s:\n' % args.username)
+        user = manager.ANONYMOUSE
+        user['is_anonymouse'] = args.anonymouse
+        user['is_admin'] = args.admin
+        user['username'] = args.username
+        user['password'] = manager.auth.hashPassword(password)
+        config['users'][args.username] = user
+        config.save()
+
+
+    def password(self):
+        parser = parser = argparse.ArgumentParser(
+            description='Generate basic config'
+        )
+        parser.add_argument('username', help="Username to change password")
+        parser.add_argument('-c', '--config', default='/etc/pyovpn/config.yml', help='Generate password for user')
+        args = parser.parse_args(sys.argv[2:])
+
+        config = Config.load(args.config)
+        manager = Manager(config)
+        if args.username in config['users']:
+            password = getpass('Enter new password for user: %s:\n' % args.username)
+            user = config['users'][args.username]
+            user['password'] = manager.auth.hashPassword(password)
+            config.save()
+
+    def nginx(self):
+        parser = parser = argparse.ArgumentParser(
+            description='Generate basic config'
+        )
+        parser.add_argument('-c', '--config', default='/etc/pyovpn/config.yml', help='Generate password for user')
+        parser.add_argument('--save', default=False, help='Store config to')
+        args = parser.parse_args(sys.argv[2:])
+        config = Config.load(args.config)
+
+
+
+if __name__ == '__main__':
+    PyOVPCtrl()

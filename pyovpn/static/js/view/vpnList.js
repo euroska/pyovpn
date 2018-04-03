@@ -1,30 +1,42 @@
 (function () {
     'use strict';
 
-    angular.module(
-        'pyovpn.vpnlist', []
-    )
-    .component('vpnList', {
-        templateUrl: '/js/view/vpnList.tpl.html',
-        controller: ['$log', '$auth', '$vpn', VpnListController],
-    //     controllAs: 'ctrl'
-        bindings: {
-            vpnList: '='
+
+    class VpnListController {
+
+        constructor($log, $auth, $vpn, $vpnDict) {
+            this.$log = $log;
+            this.$auth = $auth;
+            this.$vpn = $vpn;
+            this.$vpnDict = $vpnDict;
         }
-    });
 
-    function VpnListController($log, $auth, $vpn) {
+        $onInit() {
+            this.reload();
+        }
 
-        this.vpnAdd = () => {
+        reload() {
+            this.vpnList = [];
+            for(let name in this.$vpnDict) {
+                this.vpnList.push(this.$vpnDict[name]);
+            }
+        }
+
+        vpnAdd () {
             this.vpnAddPending = true;
-            $vpn.add(this.new_vpn)
-                .then(resetNewVpn.bind(this))
-                .catch(resetNewVpn.bind(this));
+            this.$vpn.add(this.new_vpn)
+                .then(() => {
+                    this.resetNewVpn();
+                    this.reload();
+                })
+                .catch(this.resetNewVpn.bind(this));
         };
 
-        this.$postLink = () => resetNewVpn.call(this);
+        $postLink() {
+            return this.resetNewVpn.call(this);
+        }
 
-        function resetNewVpn() {
+        resetNewVpn() {
             this.vpnAddPending = false;
             this.vpnAddForm.$setUntouched();
             this.vpnAddForm.$setPristine();
@@ -37,4 +49,16 @@
             };
         }
     }
+
+    angular.module(
+        'pyovpn.vpnlist', []
+    )
+    .component('vpnList', {
+        templateUrl: '/js/view/vpnList.tpl.html',
+        controller: VpnListController,
+    //     controllAs: 'ctrl'
+        bindings: {
+            vpns: '='
+        }
+    });
 }());

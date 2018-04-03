@@ -2,6 +2,7 @@ import sys
 import inspect
 import jsonschema
 import traceback
+import logging
 from .auth import AuthApi
 from .template_server import TemplateServerApi
 from .template_user import TemplateUserApi
@@ -9,6 +10,8 @@ from .vpn import VpnApi
 from .user import UserApi
 from .decorators import api
 from .errors import ApiError, MessageNotImplemented, InternalError, SchemaError
+
+logger = logging.getLogger(__name__)
 
 
 class Api(AuthApi, UserApi, TemplateServerApi, TemplateUserApi, VpnApi):

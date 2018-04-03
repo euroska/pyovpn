@@ -1,7 +1,11 @@
 import os
+import logging
 import asyncio
 from jinja2 import Environment
 from .ca import *
+
+
+logger = logging.getLogger(__name__)
 
 
 class VPN(object):
@@ -39,7 +43,7 @@ class VPN(object):
         }
 
     @staticmethod
-    def inicialize(manager, name, subject={}):
+    def inicialize(manager, name, autostart=False, description='', subject={}):
         '''
         Create OpenVPN runtime environment
         '''
@@ -57,9 +61,15 @@ class VPN(object):
             if not os.path.exists(path):
                 os.makedirs(path)
 
-        ca = CA.inicialize(config=config, subject=subject)
+        subject_ca = manager.config['general']['default_names'].copy()
+        subject_ca.update(subject)
+        ca = CA.inicialize(config=config, subject=subject_ca)
 
-        server_csr, server_key = Cert.genCsr(subject={'cn': 'server'})
+        subject_server = manager.config['general']['default_names'].copy()
+        subject_server.update(subject)
+        subject_server.update(cn='server')
+
+        server_csr, server_key = Cert.genCsr(subject=subject_server)
         server_cert = ca.signCert(server_csr, server=True)
 
         saveKeyPem(server_key, config['server_key_path'])
@@ -67,7 +77,8 @@ class VPN(object):
         savePem(server_cert, config['server_cert_path'])
 
         manager.config['vpns'][name] = {
-            'enabled': False,
+            'autostart': autostart,
+            'description': description,
         }
         manager.config.save()
         return VPN(manager, name)
@@ -80,7 +91,9 @@ class VPN(object):
         self.name = name
         self.jinja = Environment()
         self.config = VPN.createConfig(manager, name)
-        self.enable = self.manager.config['vpns'][name].get('enabled', False)
+        self.autostart = self.manager.config['vpns'][name].get('autostart', False)
+        self.description = self.manager.config['vpns'][name].get('description', '')
+
         self.ca = CA(self.config)
         self.server_cert = None
         self.server_key = None
@@ -104,6 +117,12 @@ class VPN(object):
         self.ip = self.parseIp()
         self.manager.vpns[self.name] = self
 
+    def save(self):
+        self.manager.config['vpns'][self.name]['autostart'] = self.autostart
+        self.manager.config['vpns'][self.name]['description'] = self.description
+
+        self.manager.config.save()
+
     def loadKeys(self):
         '''
         Load all stored RSA keys
@@ -120,7 +139,7 @@ class VPN(object):
                             self.server_key = k
 
                     except Exception as e:
-                        pass
+                        logger.exception(e)
 
             return keys
         return {}
@@ -140,7 +159,7 @@ class VPN(object):
                                 csrs[os.path.splitext(csr)[0]] = c
 
                         except Exception as e:
-                            pass
+                            logger.exception(e)
             return csrs
         return {}
 
@@ -175,7 +194,7 @@ class VPN(object):
                                 self.users.append(cn)
 
                         except Exception as e:
-                            print(e)
+                            logger.exception(e)
             return crts
         return {}
 
@@ -194,12 +213,14 @@ class VPN(object):
         if cn not in self.users:
             self.users.append(cn)
 
-        s = self.subject
-        s.update(subject)
-        s['cn'] = cn
-        csr, key = Cert.genCsr(subject=s)
+        subject_user = self.manager.config['general']['default_names'].copy()
+        subject_user.update(subject)
+        subject_user.update(cn=cn)
+
+        csr, key = Cert.genCsr(subject=subject_user)
         cert = self.ca.signCert(csr, server=False)
         cert_path = os.path.join(self.config['certs'], '%s.pem' % cn)
+
         saveKeyPem(key, os.path.join(self.config['keys'], '%s.key' % cn))
         savePem(csr, os.path.join(self.config['csrs'], '%s.csr' % cn))
         savePem(cert, cert_path)
@@ -326,7 +347,7 @@ class VPN(object):
         Get current server config
         generated with jinja template
         '''
-        if self.server_config is not None:
+        if self.server_config is not None and not regenerate:
             return self.server_config
 
         path = self.config['server_config_path']
@@ -338,6 +359,7 @@ class VPN(object):
         template = self.jinja.from_string(
             self.serverTemplateGet()
         )
+
         context = self.config.copy()
         context['name'] = self.name
         context['ca'] = serializePem(self.ca.cert.cert, str=True)
@@ -361,31 +383,39 @@ class VPN(object):
         with open(self.config['server_config_path'], 'w') as f:
             f.write(self.server_config)
 
-    def serializeList(self):
+    def serializeAdmin(self):
         return {
             'name': self.name,
-            'enable': self.enable,
-            'running': self.process is not None,
+            'description': self.description,
+            'subject': self.subject,
+            'autostart': self.autostart,
+            'running': self.running,
             'users': {
                 user: {
-                    'ip': self.ip.get(user),
+                    'username': user,
+                    'ip': self.ip.get(user, '1234'),
                     'active': self.online.get(user, False)
                 } for user in self.users
             }
         }
 
-    def serializeDetail(self):
+    def serializeUser(self, username):
         return {
             'name': self.name,
-            'enable': self.enable,
-            'subject': self.subject,
+            'description': self.description,
+            'running': self.running,
             'users': {
-                user: {
-                    'ip': self.ip.get('user'),
-                    'active': self.online.get(user, False)
-                } for user in self.users
+                username: {
+                    'username': username,
+                    'ip': self.ip.get(username, '1234'),
+                    'active': self.online.get(username, False)
+                }
             }
         }
+
+    @property
+    def running(self):
+        return self.process is not None
 
     def start(self):
         if self.process is None:

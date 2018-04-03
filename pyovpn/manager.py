@@ -11,6 +11,7 @@ from .jsonrpc import JsonRPC
 from .websocket import WebsocketProtocol
 from .api import Api
 from .vpn import VPN
+from .plugins.auth import SimpleAuth
 
 logger = logging.getLogger(__name__)
 
@@ -24,103 +25,51 @@ class Manager(object):
     }
 
     def __init__(self, config):
+        '''
+        Inicialize VPN orchestrate server
+        '''
         self.loop = asyncio.get_event_loop()
         self.config = config
         self.vpns = {}
+        self.auth = SimpleAuth(self)
         self.api = Api(self)
         self.jsonrpc = JsonRPC(self)
         self.websock = WebsocketProtocol(self)
-        self.tokens = {}
+
+        self.server = None
 
         self.app = web.Application()
-        jsonrpc = self.config._data.get('web', {}).get('jsonrpc', '/api/jsonrpc')
-        self.app.router.add_post(jsonrpc, self.jsonrpc)
-
-        websock = jsonrpc = self.config._data.get('web', {}).get('websock', '/api/ws')
-        self.app.router.add_get(websock, self.websock)
+        self.app.router.add_post(
+            self.config['web']['jsonrpc'],
+            self.jsonrpc
+        )
+        self.app.router.add_get(
+            self.config['web']['websock'],
+            self.websock
+        )
 
         if self.config['debug']:
             self.app.router.add_static('/', self.config['static_path'])
 
-    def hashPassword(self, password):
-        return hashlib.sha256(password.encode('utf8')).hexdigest()
-
-    def checkPassword(self, username, password):
-        user = self.config['users'][username]
-        return self.hashPassword(password) == user['password']
-
-    async def login(self, username, password):
-        if username in self.config['users']:
-            return self.checkPassword(username, password)
-        return False
-
-    async def getToken(self, username):
-        path = ''
-        while True:
-            hash =  hashlib.sha256(
-                (username + datetime.datetime.now().isoformat()).encode('utf-8')
-            )
-            path = os.path.join(self.config['data_path'], 'tokens', hash.hexdigest())
-            if not os.path.exists(path):
-                break
-
-        with open(path, 'w') as f:
-            f.write(username)
-
-        token = hash.hexdigest()
-        self.tokens[token] = username
-        return token
-
-    async def checkToken(self, token):
-
-        if token in self.tokens:
-            return self.tokens[token]
-
-        path = os.path.join(self.config['data_path'], 'tokens', token)
-        if os.path.exists(path):
-            with open(path, 'r') as f:
-                username = f.read()
-                self.tokens[token] = username
-                return username
-
-        return False
-
-    async def delToken(self, token):
-        path = os.path.join(self.config['data_path'], 'tokens', token)
-
-        if os.path.exists(path):
-            os.unlink(path)
-
-        if token in self.tokens:
-            del self.tokens[token]
-
-        return True
-
-    async def clearTokens(self, delta):
-        arbitrary = datetime.datetime.now() - delta
-        for root, dirs, tokens in os.walk(os.path.join(
-            self.config['data_path'], 'tokens'
-        )):
-            for token in tokens:
-                path = os.path.join(root, f)
-                if arbitrary > os.path.getctime(path):
-                    os.unlink(path)
-                    if token in self.tokens:
-                        del self.tokens[token]
-
-        return True
-
     async def run(self):
-        self.webserver = await self.loop.create_server(
-            self.app.make_handler(loop=self.loop),
-            '0.0.0.0',
-            8080
-        )
+        if self.config['web']['listen'].find('/') == -1:
+            self.config['web']['port'] = self.config['web'].get('port', 8080)
+            self.server = await self.loop.create_server(
+                self.app.make_handler(loop=self.loop),
+
+                self.config['web']['listen'],
+                self.config['web'].get('port', 8080)
+            )
+        else:
+            self.server = await self.loop.create_unix_server(
+                self.app.make_handler(loop=self.loop),
+                self.config['web']['listen'],
+            )
         self.vpns = {
             vpn: VPN(self, vpn) for vpn in self.config['vpns'].keys()
         }
 
-        await self.webserver.wait_closed()
+        await self.server.wait_closed()
 
     def start(self):
         '''
@@ -132,13 +81,19 @@ class Manager(object):
         '''
         Stop asyncio loop
         '''
-        for socket in self.webserver.sockets:
+        for socket in self.server.sockets:
             socket.close()
 
         self.webserver.close()
 
         for vpn in self.vpns.values():
             vpn.stop()
+
+    def reload(self):
+        '''
+        Reload config
+        '''
+        pass
 
     def notify(self, message):
         print(message, flush=True)
