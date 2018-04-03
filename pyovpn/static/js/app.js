@@ -43,9 +43,6 @@
         $websocketProvider.url = new_uri;
         $urlRouterProvider.otherwise('/');
 
-        $websocketProvider.url = 'ws://localhost:8080/api/ws';
-        $urlRouterProvider.otherwise('/');
-
         $stateProvider
             .state('pyovpn', {
                 abstract: true,
