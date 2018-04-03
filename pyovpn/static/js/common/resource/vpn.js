@@ -214,8 +214,8 @@
             }
 
             del(body) {
-                if (body.name in $vpnDict) {
-                    delete $vpnDict[body.name];
+                if (body in $vpnDict) {
+                    delete $vpnDict[body];
                 }
             }
 
