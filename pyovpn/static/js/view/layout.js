@@ -12,6 +12,7 @@
         .component('layout', layoutComponent);
 
     function LayoutController($log, $auth) {
+        this.$auth = $auth;
         this.logout = e => (e.preventDefault(), $auth.logout());
     }
 }());
