@@ -28,7 +28,7 @@
             <td>
                 <span class="badge badge-pill badge-info" ng-repeat="vpn in user.vpns" ng-bind="vpn"></span>
             </td>
-            <td class="text-right">
+            <td class="text-right" ng-if="$ctrl.$auth.authData.is_admin">
                 <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.userDelete(user)">
                     <i class="fas fa-times"></i>
                 </button>
@@ -37,7 +37,7 @@
     </tbody>
 </table>
 
-<form name="$ctrl.userAddForm" ng-submit="$ctrl.userAdd()" autocomplete="off">
+<form name="$ctrl.userAddForm" ng-submit="$ctrl.userAdd()" autocomplete="off" ng-if="$ctrl.$auth.authData.is_admin">
     <fieldset>
         <legend class="h5">Add user</legend>
 

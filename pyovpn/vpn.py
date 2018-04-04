@@ -406,6 +406,7 @@ class VPN(object):
         return {
             'name': self.name,
             'description': self.description,
+            'subject': self.subject,
             'running': self.running,
             'users': {
                 username: {

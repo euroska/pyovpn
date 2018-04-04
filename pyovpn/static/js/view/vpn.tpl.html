@@ -3,28 +3,34 @@
     <li class="breadcrumb-item active" aria-current="page">VPN detail</li>
 </ol>
 <h1>VPN {{ $ctrl.vpn.name }}</h1>
-<p ng-bind="$ctrl.vpn.description"></p>
+<p ng-if="!$ctrl.edit" ng-bind="$ctrl.vpn.description"></p>
+<p ng-if="$ctrl.$auth.authData.is_admin">
+    <button ng-if="!$ctrl.edit" ng-click="$ctrl.edit=true;" class="btn btn-secondary">Edit</button>
 
-<p>
-    <a ui-sref="pyovpn.vpnLog($ctrl.vpn)">Log</a>
+    <textarea ng-if="$ctrl.edit" class="w-100" rows="4" ng-model="$ctrl.vpn.description" />
+    <button ng-if="$ctrl.edit" ng-click="$ctrl.save()" type="button" class="btn btn-primary">Save</button>
+    <a class="btn btn-secondary" ui-sref="pyovpn.vpnLog($ctrl.vpn)">Log</a>
 </p>
 
-<button ng-if="!$ctrl.vpn.running" type="button" class="btn btn-success" ng-click="$ctrl.vpn.$start()">
-    start
-</button>
-<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-primary" ng-click="$ctrl.vpn.$reload()">
-    reload
-</button>
-<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-danger" ng-click="$ctrl.vpn.$stop()">
-    stop
-</button>
-<button ng-if="$ctrl.vpn.running" type="button" class="btn btn-dark" ng-click="$ctrl.vpn.$kill()">
-    kill
-</button>
+<p ng-if="$ctrl.$auth.authData.is_admin">
+    <button ng-if="!$ctrl.vpn.running" type="button" class="btn btn-success" ng-click="$ctrl.vpn.$start()">
+        start
+    </button>
+    <button ng-if="$ctrl.vpn.running" type="button" class="btn btn-primary" ng-click="$ctrl.vpn.$reload()">
+        reload
+    </button>
+    <button ng-if="$ctrl.vpn.running" type="button" class="btn btn-danger" ng-click="$ctrl.vpn.$stop()">
+        stop
+    </button>
+    <button ng-if="$ctrl.vpn.running" type="button" class="btn btn-dark" ng-click="$ctrl.vpn.$kill()">
+        kill
+    </button>
+</p>
+
 <table class="table table-sm table-striped">
     <thead>
         <tr>
-            <th>Autostart</th>
+            <th ng-if="$ctrl.$auth.authData.is_admin">Autostart</th>
             <th>Running</th>
             <th>Common name</th>
             <th>Organization name</th>
@@ -33,9 +39,18 @@
     </thead>
     <tbody>
         <tr>
-            <td><span class="badge badge-pill" ng-class="$ctrl.vpn.autostart ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="$ctrl.vpn.autostart"></span></td>
+            <td ng-if="$ctrl.$auth.authData.is_admin"><span
+                class="badge badge-pill"
+                ng-class="{'badge-success': $ctrl.vpn.autostart, 'badge-danger': !$ctrl.vpn.autostart }"
+                ng-bind="$ctrl.vpn.autostart"
+                ng-click="$ctrl.autostart()">
+                </span></td>
 
-            <td><span class="badge badge-pill" ng-class="$ctrl.vpn.running ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="$ctrl.vpn.running"></span></td>
+            <td><span
+                class="badge badge-pill"
+                ng-class="{'badge-success': $ctrl.vpn.running, 'badge-danger': !$ctrl.vpn.running }"
+                ng-bind="$ctrl.vpn.running">
+                </span></td>
 
             <td ng-bind="$ctrl.vpn.subject.cn"></td>
             <td ng-bind="$ctrl.vpn.subject.o"></td>
@@ -43,9 +58,11 @@
         </tr>
     </tbody>
 </table>
-<a ui-sref="pyovpn.vpnTemplate($ctrl.vpn)" class="btn btn-primary">Server template</a>
-<a ui-sref="pyovpn.vpnConfig($ctrl.vpn)" class="btn btn-danger">Server config</a>
-<a ui-sref="pyovpn.vpnTemplateUser($ctrl.vpn)" class="btn btn-warning">User template</a>
+<p ng-if="$ctrl.$auth.authData.is_admin">
+    <a ui-sref="pyovpn.vpnTemplate($ctrl.vpn)" class="btn btn-primary">Server template</a>
+    <a ui-sref="pyovpn.vpnConfig($ctrl.vpn)" class="btn btn-danger">Server config</a>
+    <a ui-sref="pyovpn.vpnTemplateUser($ctrl.vpn)" class="btn btn-warning">User template</a>
+</p>
 
 <h2>Users</h2>
 <input ng-model="filter" class="w-100" />
@@ -78,15 +95,13 @@
                 <button ng-if="user.present" type="button" class="btn btn-sm btn-dark" style="width: 50px;" ng-click="$ctrl.renew(user.username)">
                     renew
                 </button>
-                <button ng-if="user.present" type="button" class="btn btn-sm btn-danger" style="width: 50px;" ng-click="$ctrl.revoke(user.username)">
+                <button ng-if="user.present && $ctrl.$auth.authData.is_admin" type="button" class="btn btn-sm btn-danger" style="width: 50px;" ng-click="$ctrl.revoke(user.username)">
                     revoke
                 </button>
-                <button ng-if="!user.present" type="button" class="btn btn-sm btn-primary" style="width: 40px;" ng-click="$ctrl.add(user.username)">
+                <button ng-if="!user.present && $ctrl.$auth.authData.is_admin" type="button" class="btn btn-sm btn-primary" style="width: 40px;" ng-click="$ctrl.add(user.username)">
                     add
                 </button>
             </td>
         </tr>
     </tbody>
 </table>
-
-<!-- {{ $ctrl }} -->

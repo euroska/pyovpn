@@ -36,11 +36,13 @@
             onopen() {
                 this.$opened = true;
                 let msg = 'connect';
+
                 if(msg in this.callbacks) {
                     for (let callback of this.callbacks[msg]) {
                         callback();
                     }
                 }
+                $timeout(() => $rootScope.$apply());
                 $log.info(`$websocket- oAuth token: token`);
                 return this;
             }
@@ -100,6 +102,8 @@
                         callback();
                     }
                 }
+                $timeout(() => $rootScope.$apply());
+
                 if (!this.timer && self.reconnectDelay) {
                     this.timer = setTimeout(this.connect.bind(this), self.reconnectDelay);
                 } else if (!self.reconnectDelay) {

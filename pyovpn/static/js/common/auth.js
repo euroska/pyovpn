@@ -15,14 +15,16 @@
         class Auth {
 
             constructor() {
-                this.authData = {};
+                this.authData = {abc: 1};
                 this.logged = false;
                 this.resolved = false;
                 this.token = this.getToken();
                 this._loginDeferred = $q.defer();
 
-                $websocket.register('connect', body => {
+                $websocket.register('connect', () => {
+
                     if (this.token) {
+                        console.log("EMIT");
                         this.emitToken();
                     }
                     else {
@@ -32,7 +34,9 @@
 
                 $websocket.register('pyovpn.current', body => {
                     this.logged = body.is_anonymouse === false;
+                    angular.extend(this.authData, body);
                     this.resolved = true;
+
                     if (this.logged) this._loginDeferred.resolve(true);
                 });
             }
@@ -58,6 +62,7 @@
                 }).then(data => {
                     if(data.message == 'pyovpn.login') {
                         angular.extend(this.authData, data.body);
+
                         this.setToken(data.body.token || '');
                         this.emitToken();
                         return data.body.logged;

@@ -36,7 +36,7 @@ SCHEMA_USER_DETAIL = {
 
 
 class UserApi(object):
-    @isAdmin
+    @isAutorized
     @api(
         'pyovpn.user.list',
         schema_out={
@@ -46,13 +46,19 @@ class UserApi(object):
         }
     )
     async def userList(self, body, user):
+
+        userlist = self.manager.config['users'].items()
+
+        if not user['is_admin']:
+            userlist = {user['username']: user}.items()
+
         users = [
             {
                 'username': username,
                 'is_admin': attr.get('is_admin', False),
                 'is_anonymouse': attr.get('is_anonymouse', False),
                 'vpns': [vpn.name for vpn in self.manager.vpns.values() if vpn.hasUser(username)],
-            } for username, attr in self.manager.config['users'].items()
+            } for username, attr in userlist
         ]
         return users
 

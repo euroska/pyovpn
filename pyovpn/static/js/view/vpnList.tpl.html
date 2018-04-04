@@ -29,7 +29,7 @@
             <td>
                 <span class="badge badge-pill badge-info" ng-repeat="(username, data) in vpn.users" ng-bind="username"></span>
             </td>
-            <td class="text-right">
+            <td class="text-right" ng-if="$ctrl.$auth.authData.is_admin">
                 <button type="button" class="btn btn-danger btn-sm" ng-click="$ctrl.vpnDelete(vpn)">
                     <i class="fas fa-times"></i>
                 </button>
@@ -39,7 +39,7 @@
 </table>
 
 
-<form name="$ctrl.vpnAddForm" ng-submit="$ctrl.vpnAdd()" ng-hide="$ctrl.vpnAddPending">
+<form name="$ctrl.vpnAddForm" ng-submit="$ctrl.vpnAdd()" ng-hide="$ctrl.vpnAddPending" ng-if="$ctrl.$auth.authData.is_admin">
     <fieldset>
         <legend class="h5">Add VPN</legend>
 

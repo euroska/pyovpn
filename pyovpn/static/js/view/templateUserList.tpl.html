@@ -22,7 +22,7 @@
     </tr>
 </table>
 
-<form name="$ctrl.templateAddForm" ng-submit="$ctrl.add()" autocomplete="off">
+<form name="$ctrl.templateAddForm" ng-submit="$ctrl.add()" autocomplete="off" ng-if="auth.authData.is_admin">
     <fieldset>
         <legend class="h5">Add template</legend>
 

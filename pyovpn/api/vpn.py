@@ -28,7 +28,7 @@ class VpnApi(object):
     @api('pyovpn.vpn.list')
     async def vpnList(self, body, user):
         if not user['is_admin']:
-            body['user'] = user['username']
+            body['username'] = user['username']
 
         vpns = []
         user = body.get('username', False)
@@ -71,7 +71,8 @@ class VpnApi(object):
             vpn = self.manager.vpns[body]
             if user['is_admin']:
                 return vpn.serializeAdmin()
-            return vpn.serializeUser()
+
+        return vpn.serializeUser(user['username'])
 
     @isAdmin
     @api(
@@ -98,8 +99,9 @@ class VpnApi(object):
     async def vpnSet(self, body, user):
         vpn = None
         if body['name'] in self.manager.vpns:
-            vpn = self.manager.vpns[body]
+            vpn = self.manager.vpns[body['name']]
             vpn.autostart = body['autostart']
+            vpn.description = body['description']
             vpn.save()
         else:
             name = body['name']
@@ -275,6 +277,9 @@ class VpnApi(object):
     )
     async def vpnUserRenew(self, body, user):
         # TODO user is not admin
+        if not user['is_admin']:
+            body['username'] = user['username']
+
         if body['name'] not in self.manager.vpns:
             raise VpnDoesNotExist()
 

@@ -4,11 +4,11 @@
 </ol>
 
 <h2>User {{ $ctrl.user.username }}</h2>
-<form name="userForm" ng-submit="$ctrl.update()">
-    <p class="text-warning" ng-if="$ctrl.user.is_anonymouse">
-        User is anonymouse
-    </p>
+<p class="text-warning" ng-if="$ctrl.user.is_anonymouse">
+    User is anonymouse
+</p>
 
+<form name="userForm" ng-submit="$ctrl.update()" ng-if="$ctrl.$auth.authData.is_admin">
     <p class="form-check">
         <input type="checkbox" id="is_admin" class="form-check-input" ng-model="$ctrl.user.is_admin">
         <label for="is_admin" class="form-check-label">Is admin</label>
@@ -65,7 +65,7 @@
             <td ng-bind="vpn.ip"></td>
 
             <td><span class="badge badge-pill" ng-class="vpn.active ? { 'badge-success': false } : { 'badge-danger': true }" ng-bind="vpn.active"></span></td>
-            <td class="text-right">
+            <td class="text-right"  ng-if="$ctrl.$auth.authData.is_admin">
                 <button ng-if="vpn.present" ui-sref="pyovpn.vpnConfigUser({name: vpn.name, username: $ctrl.user.username})" type="button" class="btn btn-sm btn-primary" style="width: 50px;">
                     Config
                 </button>
@@ -83,5 +83,5 @@
     </tbody>
 </table>
 </table>
-<pre><code>{{ $ctrl.user | json }}</code></pre>
-<pre><code>{{ $ctrl.vpnList | json }}</code></pre>
+<!--<pre><code>{{ $ctrl.user | json }}</code></pre>-->
+<!--<pre><code>{{ $ctrl.vpnList | json }}</code></pre>-->

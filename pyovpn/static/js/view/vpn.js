@@ -6,10 +6,22 @@
         constructor($log, $auth) {
             this.$log = $log;
             this.$auth = $auth;
+            this.edit = false;
         }
 
         $onInit() {
             this.reload();
+        }
+
+        save() {
+            this.vpn.$save().then(() => {
+                this.edit = false;
+            });
+        }
+
+        autostart() {
+            this.vpn.autostart = !this.vpn.autostart;
+            this.vpn.$save();
         }
 
         reload() {
