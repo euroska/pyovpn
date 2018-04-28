@@ -57,6 +57,13 @@ class SimpleAuth(Auth):
                 self.tokens[token] = username
                 return username
 
+        path = os.path.join(self.manager.config['data_path'], 'permanent_tokens', token.strip())
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                username = f.read()
+                self.tokens[token] = username
+                return username
+
         return False
 
     async def delToken(self, token):

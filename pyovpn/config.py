@@ -71,6 +71,7 @@ class Config(object):
             '/templates/user',
             '/templates/server',
             '/tokens',
+            '/permanent_tokens',
             '/vpns'
         ]
 
