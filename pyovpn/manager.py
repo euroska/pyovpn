@@ -71,7 +71,7 @@ class Manager(object):
 
         for vpn in self.vpns.values():
             if vpn.autostart:
-                asyncio.ensure_future(vpn.start())
+                vpn.start()
 
         await self.server.wait_closed()
 

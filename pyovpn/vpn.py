@@ -423,8 +423,7 @@ class VPN(object):
 
     def start(self):
         if self.process is None:
-            self.await = self.run()
-            asyncio.ensure_future(self.await)
+            asyncio.ensure_future(self.run())
             return True
 
         return False
